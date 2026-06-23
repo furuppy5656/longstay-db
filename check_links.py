@@ -34,6 +34,16 @@ TIMEOUT = 12  # 秒
 UA = ("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
       "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36")
 
+# --- 許容リスト（whitelist）---
+# 「HTTPでは到達不可/4xxになるが、Googleマップや別ソースで現存・営業を確認済み」の
+# リンク。要確認リストからは除外し、レポート末尾に「許容リスト適用」として残す。
+# 例: このMac環境のDNS事情で uzuhouse.com が解決できないが、サイト自体は営業中。
+# URL（完全一致）→ 確認メモ（最終確認日と理由）を書く。確認できなくなったら消す。
+KNOWN_OK = {
+    "https://uzuhouse.com/":
+        "2026-06-24確認: 営業中（tabelog/公式en/Instagram）。この環境のDNSで未解決のみ。",
+}
+
 # 一部サイトは証明書検証で弾かれるが「到達はできている」ので、
 # 死活判定では緩めの SSL コンテキストも使う。
 _LAX_SSL = ssl.create_default_context()
@@ -83,7 +93,8 @@ def main():
 
     now = datetime.datetime.now().astimezone().isoformat(timespec="seconds")
     results = []
-    suspicious = []  # 要確認施設
+    suspicious = []   # 要確認施設
+    whitelisted = []  # 許容リスト適用で除外したリンク（見落とし防止に記録）
 
     total_links = 0
     for item in data:
@@ -95,12 +106,23 @@ def main():
                 continue
             total_links += 1
             ok, status, note = fetch(url)
-            print(f"[{'OK ' if ok else 'NG '}] {status if status is not None else '---':>4}  {name} / {label}  {url}")
-            link_results.append({
+            wl = url in KNOWN_OK
+            flag = "OK " if ok else ("WL " if wl else "NG ")
+            print(f"[{flag}] {status if status is not None else '---':>4}  {name} / {label}  {url}")
+            lr = {
                 "label": label, "url": url,
                 "ok": ok, "status": status, "note": note,
-            })
-            if not ok or (status is not None and status >= 400):
+                "whitelisted": wl,
+                "whitelist_note": KNOWN_OK.get(url, ""),
+            }
+            link_results.append(lr)
+            is_bad = (not ok or (status is not None and status >= 400))
+            if is_bad and wl:
+                # 許容リスト適用：要確認には載せず、別枠で記録
+                whitelisted.append({"name": name, "label": label, "url": url,
+                                    "status": status, "note": note,
+                                    "whitelist_note": KNOWN_OK[url]})
+            elif is_bad:
                 item_has_problem = True
 
         results.append({
@@ -123,6 +145,8 @@ def main():
         "total_facilities": len(data),
         "total_links": total_links,
         "suspicious_count": len(suspicious),
+        "whitelisted_count": len(whitelisted),
+        "whitelisted": whitelisted,
         "results": results,
     }
     with open(STATUS_PATH, "w", encoding="utf-8") as f:
@@ -134,7 +158,8 @@ def main():
     lines.append("")
     lines.append(f"- 最終チェック: **{now}**")
     lines.append(f"- 施設数: {len(data)} / チェックしたリンク: {total_links}")
-    lines.append(f"- 要確認の施設: **{len(suspicious)} 件**")
+    lines.append(f"- 要確認の施設: **{len(suspicious)} 件**"
+                 + (f" / 許容リスト適用: {len(whitelisted)} 件" if whitelisted else ""))
     lines.append("")
     lines.append("> HTTPで届かなかった/4xx・5xxを返したリンクを持つ施設のみ掲載。")
     lines.append("> 403/429 等は bot ブロックで実際は生きていることも多い。")
@@ -158,13 +183,28 @@ def main():
                          "休業なら body に注記 or 施設ごと削除。")
             lines.append("")
 
+    # 許容リスト（whitelist）適用分：要確認には載せないが、見落とし防止に列挙
+    if whitelisted:
+        lines.append("---")
+        lines.append("")
+        lines.append("## 🟡 許容リスト適用（HTTP未到達だが現存確認済み・対応不要）")
+        lines.append("")
+        lines.append("> check_links.py の `KNOWN_OK` に登録済み。サイトは生きているが"
+                     "この環境のDNS事情等で到達できないもの。確認できなくなったら登録を外すこと。")
+        lines.append("")
+        for w in whitelisted:
+            st = w["status"] if w["status"] is not None else "到達不可"
+            lines.append(f"- 🟡 {w['name']} / [{w['label']}]({w['url']}) — `{st}` "
+                         f"／ {w['whitelist_note']}")
+        lines.append("")
+
     with open(REPORT_PATH, "w", encoding="utf-8") as f:
         f.write("\n".join(lines) + "\n")
 
     print("")
     print(f"→ {STATUS_PATH}")
     print(f"→ {REPORT_PATH}")
-    print(f"要確認: {len(suspicious)} 件 / 全 {len(data)} 施設")
+    print(f"要確認: {len(suspicious)} 件 / 許容リスト適用: {len(whitelisted)} 件 / 全 {len(data)} 施設")
     return 0
 
 

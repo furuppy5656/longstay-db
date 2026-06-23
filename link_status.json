@@ -1,8 +1,19 @@
 {
-  "checked_at": "2026-06-24T07:40:21+09:00",
+  "checked_at": "2026-06-24T07:46:01+09:00",
   "total_facilities": 37,
   "total_links": 42,
-  "suspicious_count": 1,
+  "suspicious_count": 0,
+  "whitelisted_count": 1,
+  "whitelisted": [
+    {
+      "name": "uzuhouse（ウズハウス）",
+      "label": "公式サイト",
+      "url": "https://uzuhouse.com/",
+      "status": null,
+      "note": "URLError: [Errno 8] nodename nor servname provided, or not known",
+      "whitelist_note": "2026-06-24確認: 営業中（tabelog/公式en/Instagram）。この環境のDNSで未解決のみ。"
+    }
+  ],
   "results": [
     {
       "name": "水戸宿泊交流場",
@@ -14,7 +25,9 @@
           "url": "https://www.mito-shukuhaku-kouryuu-ba.com",
           "ok": true,
           "status": 200,
-          "note": "ok"
+          "note": "ok",
+          "whitelisted": false,
+          "whitelist_note": ""
         }
       ]
     },
@@ -28,14 +41,18 @@
           "url": "https://gunmagurashi.pref.gunma.jp/g_telework/workplace/hotori",
           "ok": true,
           "status": 200,
-          "note": "ok"
+          "note": "ok",
+          "whitelisted": false,
+          "whitelist_note": ""
         },
         {
           "label": "Instagram",
           "url": "https://www.instagram.com/hotori_minakami/",
           "ok": true,
           "status": 200,
-          "note": "ok"
+          "note": "ok",
+          "whitelisted": false,
+          "whitelist_note": ""
         }
       ]
     },
@@ -49,7 +66,9 @@
           "url": "https://minamiboso-workation.jp/facilities",
           "ok": true,
           "status": 200,
-          "note": "ok"
+          "note": "ok",
+          "whitelisted": false,
+          "whitelist_note": ""
         }
       ]
     },
@@ -63,7 +82,9 @@
           "url": "https://icotto.jp/presses/18471",
           "ok": true,
           "status": 200,
-          "note": "ok"
+          "note": "ok",
+          "whitelisted": false,
+          "whitelist_note": ""
         }
       ]
     },
@@ -77,7 +98,9 @@
           "url": "https://aumo.jp/articles/1291762",
           "ok": true,
           "status": 200,
-          "note": "ok"
+          "note": "ok",
+          "whitelisted": false,
+          "whitelist_note": ""
         }
       ]
     },
@@ -91,7 +114,9 @@
           "url": "https://workation.app/hotels/7nlkVtvUMhChZjCUSlsB0l",
           "ok": true,
           "status": 200,
-          "note": "ok"
+          "note": "ok",
+          "whitelisted": false,
+          "whitelist_note": ""
         }
       ]
     },
@@ -105,7 +130,9 @@
           "url": "https://www.furusato-tax.jp/feature/a/series_workcation",
           "ok": true,
           "status": 200,
-          "note": "ok"
+          "note": "ok",
+          "whitelisted": false,
+          "whitelist_note": ""
         }
       ]
     },
@@ -119,7 +146,9 @@
           "url": "https://goto.nagasaki-tabinet.com/feature/osusume",
           "ok": true,
           "status": 200,
-          "note": "ok"
+          "note": "ok",
+          "whitelisted": false,
+          "whitelist_note": ""
         }
       ]
     },
@@ -133,7 +162,9 @@
           "url": "https://office.yield-marketing.co.jp/coworking/recommended-kumamoto-coworking/",
           "ok": true,
           "status": 200,
-          "note": "ok"
+          "note": "ok",
+          "whitelisted": false,
+          "whitelist_note": ""
         }
       ]
     },
@@ -147,7 +178,9 @@
           "url": "https://k-local2020.com/sharehouse/",
           "ok": true,
           "status": 200,
-          "note": "ok"
+          "note": "ok",
+          "whitelisted": false,
+          "whitelist_note": ""
         }
       ]
     },
@@ -161,7 +194,9 @@
           "url": "https://den-paku.com/portfolio-item/hotel_amami",
           "ok": true,
           "status": 200,
-          "note": "ok"
+          "note": "ok",
+          "whitelisted": false,
+          "whitelist_note": ""
         }
       ]
     },
@@ -175,7 +210,9 @@
           "url": "https://www.tamitottori.com/",
           "ok": true,
           "status": 200,
-          "note": "ok"
+          "note": "ok",
+          "whitelisted": false,
+          "whitelist_note": ""
         }
       ]
     },
@@ -189,7 +226,9 @@
           "url": "https://y-tottori.com/",
           "ok": true,
           "status": 200,
-          "note": "ok"
+          "note": "ok",
+          "whitelisted": false,
+          "whitelist_note": ""
         }
       ]
     },
@@ -203,7 +242,9 @@
           "url": "https://address.love/column/?p=3179",
           "ok": true,
           "status": 200,
-          "note": "ok"
+          "note": "ok",
+          "whitelisted": false,
+          "whitelist_note": ""
         }
       ]
     },
@@ -217,7 +258,9 @@
           "url": "https://yuurin-an.jp/",
           "ok": true,
           "status": 200,
-          "note": "ok"
+          "note": "ok",
+          "whitelisted": false,
+          "whitelist_note": ""
         }
       ]
     },
@@ -231,7 +274,9 @@
           "url": "https://www.okayama-iju.jp/info/post-113.html",
           "ok": true,
           "status": 200,
-          "note": "ok"
+          "note": "ok",
+          "whitelisted": false,
+          "whitelist_note": ""
         }
       ]
     },
@@ -245,7 +290,9 @@
           "url": "https://livinganywherecommons.com/article/guest_house/202307250002/",
           "ok": true,
           "status": 200,
-          "note": "ok"
+          "note": "ok",
+          "whitelisted": false,
+          "whitelist_note": ""
         }
       ]
     },
@@ -259,7 +306,9 @@
           "url": "https://irohasou.com/",
           "ok": true,
           "status": 200,
-          "note": "ok"
+          "note": "ok",
+          "whitelisted": false,
+          "whitelist_note": ""
         }
       ]
     },
@@ -273,7 +322,9 @@
           "url": "https://tabiiro.jp/yado/theme/ittogashi/ranking/saninsanyo/hiroshima/",
           "ok": true,
           "status": 200,
-          "note": "ok"
+          "note": "ok",
+          "whitelisted": false,
+          "whitelist_note": ""
         }
       ]
     },
@@ -287,7 +338,9 @@
           "url": "https://uzuhouse.com/",
           "ok": false,
           "status": null,
-          "note": "URLError: [Errno 8] nodename nor servname provided, or not known"
+          "note": "URLError: [Errno 8] nodename nor servname provided, or not known",
+          "whitelisted": true,
+          "whitelist_note": "2026-06-24確認: 営業中（tabelog/公式en/Instagram）。この環境のDNSで未解決のみ。"
         }
       ]
     },
@@ -301,7 +354,9 @@
           "url": "https://www.travelbook.co.jp/topic/41102",
           "ok": true,
           "status": 200,
-          "note": "ok"
+          "note": "ok",
+          "whitelisted": false,
+          "whitelist_note": ""
         }
       ]
     },
@@ -315,7 +370,9 @@
           "url": "https://www.town.suo-oshima.lg.jp/soshiki/7/1783.html",
           "ok": true,
           "status": 200,
-          "note": "ok"
+          "note": "ok",
+          "whitelisted": false,
+          "whitelist_note": ""
         }
       ]
     },
@@ -329,14 +386,18 @@
           "url": "https://guesthouse-itoan.com/",
           "ok": true,
           "status": 200,
-          "note": "ok"
+          "note": "ok",
+          "whitelisted": false,
+          "whitelist_note": ""
         },
         {
           "label": "料金・部屋",
           "url": "https://guesthouse-itoan.com/room-fee/",
           "ok": true,
           "status": 200,
-          "note": "ok"
+          "note": "ok",
+          "whitelisted": false,
+          "whitelist_note": ""
         }
       ]
     },
@@ -350,7 +411,9 @@
           "url": "https://villa-idumoya.com/",
           "ok": true,
           "status": 200,
-          "note": "ok"
+          "note": "ok",
+          "whitelisted": false,
+          "whitelist_note": ""
         }
       ]
     },
@@ -364,7 +427,9 @@
           "url": "https://www.aco.co.jp/yado/dir/0/chugoku/simane/index.html",
           "ok": true,
           "status": 200,
-          "note": "ok"
+          "note": "ok",
+          "whitelisted": false,
+          "whitelist_note": ""
         }
       ]
     },
@@ -378,7 +443,9 @@
           "url": "https://www.aco.co.jp/yado/dir/0/chugoku/simane/index.html",
           "ok": true,
           "status": 200,
-          "note": "ok"
+          "note": "ok",
+          "whitelisted": false,
+          "whitelist_note": ""
         }
       ]
     },
@@ -392,7 +459,9 @@
           "url": "https://www.oki-katsumaya.com/",
           "ok": true,
           "status": 200,
-          "note": "ok"
+          "note": "ok",
+          "whitelisted": false,
+          "whitelist_note": ""
         }
       ]
     },
@@ -406,14 +475,18 @@
           "url": "https://www.chillnn.com/ja/18e63c39166356",
           "ok": true,
           "status": 200,
-          "note": "ok"
+          "note": "ok",
+          "whitelisted": false,
+          "whitelist_note": ""
         },
         {
           "label": "Instagram",
           "url": "https://www.instagram.com/deltahostel_akita/",
           "ok": true,
           "status": 200,
-          "note": "ok"
+          "note": "ok",
+          "whitelisted": false,
+          "whitelist_note": ""
         }
       ]
     },
@@ -427,7 +500,9 @@
           "url": "https://umebachi2009.com/",
           "ok": true,
           "status": 200,
-          "note": "ok"
+          "note": "ok",
+          "whitelisted": false,
+          "whitelist_note": ""
         }
       ]
     },
@@ -441,14 +516,18 @@
           "url": "https://www.linnashotels.com/kanazawa/",
           "ok": true,
           "status": 200,
-          "note": "ok"
+          "note": "ok",
+          "whitelisted": false,
+          "whitelist_note": ""
         },
         {
           "label": "コワーキング",
           "url": "https://e-office.space/spaces/hokuriku-koshinetsu/ishikawa/kanazawashi/kanazawa-by-linnas",
           "ok": true,
           "status": 200,
-          "note": "ok"
+          "note": "ok",
+          "whitelisted": false,
+          "whitelist_note": ""
         }
       ]
     },
@@ -462,7 +541,9 @@
           "url": "https://sharehouse.in/jpn/area/search/19/",
           "ok": true,
           "status": 200,
-          "note": "ok"
+          "note": "ok",
+          "whitelisted": false,
+          "whitelist_note": ""
         }
       ]
     },
@@ -476,14 +557,18 @@
           "url": "https://unknown.kyoto/plan/monthly/",
           "ok": true,
           "status": 200,
-          "note": "ok"
+          "note": "ok",
+          "whitelisted": false,
+          "whitelist_note": ""
         },
         {
           "label": "コワーキング",
           "url": "https://unknown.kyoto/coworking/",
           "ok": true,
           "status": 200,
-          "note": "ok"
+          "note": "ok",
+          "whitelisted": false,
+          "whitelist_note": ""
         }
       ]
     },
@@ -497,7 +582,9 @@
           "url": "https://www.go-nagano.net/accommodation/id20858",
           "ok": true,
           "status": 200,
-          "note": "ok"
+          "note": "ok",
+          "whitelisted": false,
+          "whitelist_note": ""
         }
       ]
     },
@@ -511,7 +598,9 @@
           "url": "http://esperanza.okinawa/long_stay.html",
           "ok": true,
           "status": 200,
-          "note": "ok"
+          "note": "ok",
+          "whitelisted": false,
+          "whitelist_note": ""
         }
       ]
     },
@@ -525,7 +614,9 @@
           "url": "https://www.go-nagano.net/accommodation/id20858",
           "ok": true,
           "status": 200,
-          "note": "ok"
+          "note": "ok",
+          "whitelisted": false,
+          "whitelist_note": ""
         }
       ]
     },
@@ -539,7 +630,9 @@
           "url": "https://address.love/",
           "ok": true,
           "status": 200,
-          "note": "ok"
+          "note": "ok",
+          "whitelisted": false,
+          "whitelist_note": ""
         }
       ]
     },
@@ -553,7 +646,9 @@
           "url": "https://livinganywherecommons.com/",
           "ok": true,
           "status": 200,
-          "note": "ok"
+          "note": "ok",
+          "whitelisted": false,
+          "whitelist_note": ""
         }
       ]
     }
