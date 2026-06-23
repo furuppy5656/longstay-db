@@ -1,7 +1,7 @@
 {
-  "checked_at": "2026-06-24T07:46:01+09:00",
+  "checked_at": "2026-06-24T08:01:45+09:00",
   "total_facilities": 37,
-  "total_links": 42,
+  "total_links": 44,
   "suspicious_count": 0,
   "whitelisted_count": 1,
   "whitelisted": [
@@ -78,8 +78,8 @@
       "loc": "九十九里町・ロングビーチ徒歩5分",
       "links": [
         {
-          "label": "紹介記事",
-          "url": "https://icotto.jp/presses/18471",
+          "label": "公式サイト",
+          "url": "https://www.ducale-hotel.com/",
           "ok": true,
           "status": 200,
           "note": "ok",
@@ -94,8 +94,8 @@
       "loc": "福岡市・祇園駅 徒歩7分",
       "links": [
         {
-          "label": "紹介記事",
-          "url": "https://aumo.jp/articles/1291762",
+          "label": "公式予約",
+          "url": "https://www.chillnn.com/182b5c5c81b209",
           "ok": true,
           "status": 200,
           "note": "ok",
@@ -110,8 +110,8 @@
       "loc": "福岡市・大濠公園前",
       "links": [
         {
-          "label": "施設情報",
-          "url": "https://workation.app/hotels/7nlkVtvUMhChZjCUSlsB0l",
+          "label": "公式サイト",
+          "url": "https://unplan.jp/fukuoka",
           "ok": true,
           "status": 200,
           "note": "ok",
@@ -158,8 +158,8 @@
       "loc": "菊池市・田園地帯",
       "links": [
         {
-          "label": "熊本コワーキング紹介",
-          "url": "https://office.yield-marketing.co.jp/coworking/recommended-kumamoto-coworking/",
+          "label": "公式サイト",
+          "url": "https://kikuchi.miraibase.net/",
           "ok": true,
           "status": 200,
           "note": "ok",
@@ -238,8 +238,8 @@
       "loc": "大山町・大山寺エリア",
       "links": [
         {
-          "label": "ADDress紹介",
-          "url": "https://address.love/column/?p=3179",
+          "label": "公式サイト",
+          "url": "https://daisen-guesthouse-juan.com/",
           "ok": true,
           "status": 200,
           "note": "ok",
@@ -350,8 +350,8 @@
       "loc": "萩市・萩バスセンター圏",
       "links": [
         {
-          "label": "紹介記事",
-          "url": "https://www.travelbook.co.jp/topic/41102",
+          "label": "公式サイト",
+          "url": "https://guesthouse-ruco.com/",
           "ok": true,
           "status": 200,
           "note": "ok",
@@ -423,8 +423,8 @@
       "loc": "大田市・温泉津温泉街（石見銀山圏）",
       "links": [
         {
-          "label": "宿一覧",
-          "url": "https://www.aco.co.jp/yado/dir/0/chugoku/simane/index.html",
+          "label": "公式サイト",
+          "url": "https://soho.argnai.com/",
           "ok": true,
           "status": 200,
           "note": "ok",
@@ -578,11 +578,11 @@
       "loc": "今治市・大三島（しまなみ）",
       "links": [
         {
-          "label": "施設情報",
-          "url": "https://www.go-nagano.net/accommodation/id20858",
+          "label": "公式サイト",
+          "url": "https://www.miyauragoten.com/",
           "ok": true,
-          "status": 200,
-          "note": "ok",
+          "status": 403,
+          "note": "HTTPError 403",
           "whitelisted": false,
           "whitelist_note": ""
         }
@@ -607,10 +607,28 @@
     {
       "name": "ゲストハウス雷鳥 / まある",
       "pref": "長野",
-      "loc": "松江市 / 小布施町",
+      "loc": "松本市・乗鞍高原（雷鳥） / 小布施町（まある）",
       "links": [
         {
-          "label": "長野県公式",
+          "label": "雷鳥 公式",
+          "url": "https://ghraicho.com/",
+          "ok": true,
+          "status": 200,
+          "note": "ok",
+          "whitelisted": false,
+          "whitelist_note": ""
+        },
+        {
+          "label": "まある 公式",
+          "url": "https://yado.maaru-obuse.com/",
+          "ok": true,
+          "status": 200,
+          "note": "ok",
+          "whitelisted": false,
+          "whitelist_note": ""
+        },
+        {
+          "label": "長野県公式まとめ",
           "url": "https://www.go-nagano.net/accommodation/id20858",
           "ok": true,
           "status": 200,

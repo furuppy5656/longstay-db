@@ -116,7 +116,9 @@ def main():
                 "whitelist_note": KNOWN_OK.get(url, ""),
             }
             link_results.append(lr)
-            is_bad = (not ok or (status is not None and status >= 400))
+            # fetch() が「到達OK」とみなしたもの（200〜3xx、および403/429等のbot弾き）は
+            # 要確認に載せない。404/5xx/到達不可など ok=False のみを問題扱いにする。
+            is_bad = (not ok)
             if is_bad and wl:
                 # 許容リスト適用：要確認には載せず、別枠で記録
                 whitelisted.append({"name": name, "label": label, "url": url,
