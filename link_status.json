@@ -1,0 +1,561 @@
+{
+  "checked_at": "2026-06-24T07:34:35+09:00",
+  "total_facilities": 37,
+  "total_links": 42,
+  "suspicious_count": 4,
+  "results": [
+    {
+      "name": "水戸宿泊交流場",
+      "pref": "茨城",
+      "loc": "水戸市柳町（水戸駅圏）",
+      "links": [
+        {
+          "label": "公式サイト",
+          "url": "https://www.mito-shukuhaku-kouryuu-ba.com",
+          "ok": true,
+          "status": 200,
+          "note": "ok"
+        }
+      ]
+    },
+    {
+      "name": "ゲストハウス＆コワーキング ほとり",
+      "pref": "群馬",
+      "loc": "みなかみ町・水上温泉街中心",
+      "links": [
+        {
+          "label": "群馬県テレワーク情報",
+          "url": "https://gunmagurashi.pref.gunma.jp/g_telework/workplace/hotori",
+          "ok": true,
+          "status": 200,
+          "note": "ok"
+        },
+        {
+          "label": "Instagram",
+          "url": "https://www.instagram.com/hotori_minakami/",
+          "ok": true,
+          "status": 200,
+          "note": "ok"
+        }
+      ]
+    },
+    {
+      "name": "南房総ワーケーション 一棟貸し群",
+      "pref": "千葉",
+      "loc": "南房総市・岩井海岸圏",
+      "links": [
+        {
+          "label": "南房総ワーケーション",
+          "url": "https://minamiboso-workation.jp/facilities",
+          "ok": true,
+          "status": 200,
+          "note": "ok"
+        }
+      ]
+    },
+    {
+      "name": "ドゥカーレ ガーデンホテル九十九里",
+      "pref": "千葉",
+      "loc": "九十九里町・ロングビーチ徒歩5分",
+      "links": [
+        {
+          "label": "紹介記事",
+          "url": "https://icotto.jp/presses/18471",
+          "ok": true,
+          "status": 200,
+          "note": "ok"
+        }
+      ]
+    },
+    {
+      "name": "HafH Fukuoka THE LIFE",
+      "pref": "福岡",
+      "loc": "福岡市・祇園駅 徒歩7分",
+      "links": [
+        {
+          "label": "紹介記事",
+          "url": "https://aumo.jp/articles/1291762",
+          "ok": true,
+          "status": 200,
+          "note": "ok"
+        }
+      ]
+    },
+    {
+      "name": "UNPLAN Fukuoka",
+      "pref": "福岡",
+      "loc": "福岡市・大濠公園前",
+      "links": [
+        {
+          "label": "施設情報",
+          "url": "https://workation.app/hotels/7nlkVtvUMhChZjCUSlsB0l",
+          "ok": true,
+          "status": 200,
+          "note": "ok"
+        }
+      ]
+    },
+    {
+      "name": "体験型民泊 村井屋",
+      "pref": "福岡",
+      "loc": "香春町・採銅所駅圏",
+      "links": [
+        {
+          "label": "ふるさとチョイス",
+          "url": "https://www.furusato-tax.jp/feature/a/series_workcation",
+          "ok": true,
+          "status": 200,
+          "note": "ok"
+        }
+      ]
+    },
+    {
+      "name": "五島・地域拠点型レンタルスペース＋宿",
+      "pref": "長崎",
+      "loc": "五島市・福江島 商店街中心",
+      "links": [
+        {
+          "label": "五島ワーケーション",
+          "url": "https://goto.nagasaki-tabinet.com/feature/osusume",
+          "ok": true,
+          "status": 200,
+          "note": "ok"
+        }
+      ]
+    },
+    {
+      "name": "菊池みらいベース",
+      "pref": "熊本",
+      "loc": "菊池市・田園地帯",
+      "links": [
+        {
+          "label": "熊本コワーキング紹介",
+          "url": "https://office.yield-marketing.co.jp/coworking/recommended-kumamoto-coworking/",
+          "ok": true,
+          "status": 200,
+          "note": "ok"
+        }
+      ]
+    },
+    {
+      "name": "K-LOCAL つがれ（シェア＆ゲストハウス）",
+      "pref": "宮崎",
+      "loc": "美郷町中心地（役場圏）",
+      "links": [
+        {
+          "label": "長期滞在プラン",
+          "url": "https://k-local2020.com/sharehouse/",
+          "ok": true,
+          "status": 200,
+          "note": "ok"
+        }
+      ]
+    },
+    {
+      "name": "伝泊 奄美（まーぐん広場）",
+      "pref": "鹿児島",
+      "loc": "奄美大島・笠利",
+      "links": [
+        {
+          "label": "BIGLOBE旅行",
+          "url": "https://travel.biglobe.ne.jp/onsen/selection/guesthouse/pref46/",
+          "ok": false,
+          "status": null,
+          "note": "URLError: [Errno 54] Connection reset by peer"
+        }
+      ]
+    },
+    {
+      "name": "たみ ゲストハウス＆カフェ",
+      "pref": "鳥取",
+      "loc": "湯梨浜町・東郷池畔（松崎駅）",
+      "links": [
+        {
+          "label": "公式サイト",
+          "url": "https://www.tamitottori.com/",
+          "ok": true,
+          "status": 200,
+          "note": "ok"
+        }
+      ]
+    },
+    {
+      "name": "Y Pub & Hostel TOTTORI",
+      "pref": "鳥取",
+      "loc": "鳥取市・鳥取駅 徒歩5分",
+      "links": [
+        {
+          "label": "公式サイト",
+          "url": "https://y-tottori.com/",
+          "ok": true,
+          "status": 200,
+          "note": "ok"
+        }
+      ]
+    },
+    {
+      "name": "大山ゲストハウス寿庵",
+      "pref": "鳥取",
+      "loc": "大山町・大山寺エリア",
+      "links": [
+        {
+          "label": "ADDress紹介",
+          "url": "https://address.love/column/?p=3179",
+          "ok": true,
+          "status": 200,
+          "note": "ok"
+        }
+      ]
+    },
+    {
+      "name": "有鄰庵（ゆうりんあん）",
+      "pref": "岡山",
+      "loc": "倉敷市・美観地区",
+      "links": [
+        {
+          "label": "公式サイト",
+          "url": "https://yuurin-an.jp/",
+          "ok": true,
+          "status": 200,
+          "note": "ok"
+        }
+      ]
+    },
+    {
+      "name": "宇野港編集室",
+      "pref": "岡山",
+      "loc": "玉野市・宇野港",
+      "links": [
+        {
+          "label": "岡山県移住ポータル",
+          "url": "https://www.okayama-iju.jp/info/post-113.html",
+          "ok": true,
+          "status": 200,
+          "note": "ok"
+        }
+      ]
+    },
+    {
+      "name": "LivingAnywhere Commons 津山/真庭",
+      "pref": "岡山",
+      "loc": "津山市・真庭市",
+      "links": [
+        {
+          "label": "岡山拠点紹介",
+          "url": "https://livinganywherecommons.com/article/guest_house/202307250002/",
+          "ok": true,
+          "status": 200,
+          "note": "ok"
+        }
+      ]
+    },
+    {
+      "name": "尾道ゲストハウス いろは荘",
+      "pref": "広島",
+      "loc": "尾道市・坂の街",
+      "links": [
+        {
+          "label": "公式サイト",
+          "url": "https://irohasou.com/",
+          "ok": true,
+          "status": 200,
+          "note": "ok"
+        }
+      ]
+    },
+    {
+      "name": "江田島 一棟貸し（自然素材の宿）",
+      "pref": "広島",
+      "loc": "江田島・広島市からアクセス良",
+      "links": [
+        {
+          "label": "旅色",
+          "url": "https://tabiiro.jp/yado/theme/ittogashi/ranking/saninsanyo/hiroshima/",
+          "ok": true,
+          "status": 200,
+          "note": "ok"
+        }
+      ]
+    },
+    {
+      "name": "uzuhouse（ウズハウス）",
+      "pref": "山口",
+      "loc": "下関市・関門海峡沿い",
+      "links": [
+        {
+          "label": "公式サイト",
+          "url": "https://uzuhouse.com/",
+          "ok": false,
+          "status": null,
+          "note": "URLError: [Errno 8] nodename nor servname provided, or not known"
+        }
+      ]
+    },
+    {
+      "name": "萩ゲストハウス ruco",
+      "pref": "山口",
+      "loc": "萩市・萩バスセンター圏",
+      "links": [
+        {
+          "label": "紹介記事",
+          "url": "https://www.travelbook.co.jp/topic/41102",
+          "ok": true,
+          "status": 200,
+          "note": "ok"
+        }
+      ]
+    },
+    {
+      "name": "周防大島 古民家ゲストハウス",
+      "pref": "山口",
+      "loc": "周防大島町（瀬戸内の島）",
+      "links": [
+        {
+          "label": "山口県宿一覧",
+          "url": "https://www.clipit.jp/yamaguchi/minshuku/",
+          "ok": false,
+          "status": null,
+          "note": "URLError: timed out"
+        }
+      ]
+    },
+    {
+      "name": "出雲ゲストハウス いとあん",
+      "pref": "島根",
+      "loc": "出雲市・JR出雲市駅 徒歩5分",
+      "links": [
+        {
+          "label": "公式サイト",
+          "url": "https://guesthouse-itoan.com/",
+          "ok": true,
+          "status": 200,
+          "note": "ok"
+        },
+        {
+          "label": "料金・部屋",
+          "url": "https://guesthouse-itoan.com/room-fee/",
+          "ok": true,
+          "status": 200,
+          "note": "ok"
+        }
+      ]
+    },
+    {
+      "name": "ヴィラ出雲屋",
+      "pref": "島根",
+      "loc": "出雲市・JR出雲市駅 徒歩3分",
+      "links": [
+        {
+          "label": "公式サイト",
+          "url": "https://villa-idumoya.com/",
+          "ok": true,
+          "status": 200,
+          "note": "ok"
+        }
+      ]
+    },
+    {
+      "name": "赭Soho（そほ）温泉津",
+      "pref": "島根",
+      "loc": "大田市・温泉津温泉街（石見銀山圏）",
+      "links": [
+        {
+          "label": "宿一覧",
+          "url": "https://www.aco.co.jp/yado/dir/0/chugoku/simane/index.html",
+          "ok": true,
+          "status": 200,
+          "note": "ok"
+        }
+      ]
+    },
+    {
+      "name": "古民家ゲストハウス 湯るり",
+      "pref": "島根",
+      "loc": "大田市・温泉津温泉街",
+      "links": [
+        {
+          "label": "宿一覧",
+          "url": "https://www.aco.co.jp/yado/dir/0/chugoku/simane/index.html",
+          "ok": true,
+          "status": 200,
+          "note": "ok"
+        }
+      ]
+    },
+    {
+      "name": "隠岐の宿処 勝馬屋の里",
+      "pref": "島根",
+      "loc": "隠岐郡（離島）",
+      "links": [
+        {
+          "label": "じゃらん",
+          "url": "https://www.jalan.net/yad347894/",
+          "ok": false,
+          "status": 404,
+          "note": "HTTPError 404"
+        }
+      ]
+    },
+    {
+      "name": "DELTA HOSTEL",
+      "pref": "秋田",
+      "loc": "秋田市保戸野・原の町バス停 徒歩1分",
+      "links": [
+        {
+          "label": "公式予約",
+          "url": "https://www.chillnn.com/ja/18e63c39166356",
+          "ok": true,
+          "status": 200,
+          "note": "ok"
+        },
+        {
+          "label": "Instagram",
+          "url": "https://www.instagram.com/deltahostel_akita/",
+          "ok": true,
+          "status": 200,
+          "note": "ok"
+        }
+      ]
+    },
+    {
+      "name": "ゲストハウス梅鉢",
+      "pref": "宮城",
+      "loc": "仙台市",
+      "links": [
+        {
+          "label": "公式サイト",
+          "url": "https://umebachi2009.com/",
+          "ok": true,
+          "status": 200,
+          "note": "ok"
+        }
+      ]
+    },
+    {
+      "name": "LINNAS Kanazawa",
+      "pref": "石川",
+      "loc": "金沢市・近江町市場 徒歩2分",
+      "links": [
+        {
+          "label": "公式サイト",
+          "url": "https://www.linnashotels.com/kanazawa/",
+          "ok": true,
+          "status": 200,
+          "note": "ok"
+        },
+        {
+          "label": "コワーキング",
+          "url": "https://e-office.space/spaces/hokuriku-koshinetsu/ishikawa/kanazawashi/kanazawa-by-linnas",
+          "ok": true,
+          "status": 200,
+          "note": "ok"
+        }
+      ]
+    },
+    {
+      "name": "G-eight HOUSE",
+      "pref": "石川",
+      "loc": "金沢市・金沢駅 徒歩8分",
+      "links": [
+        {
+          "label": "情報ページ",
+          "url": "https://sharehouse.in/jpn/area/search/19/",
+          "ok": true,
+          "status": 200,
+          "note": "ok"
+        }
+      ]
+    },
+    {
+      "name": "UNKNOWN KYOTO",
+      "pref": "京都",
+      "loc": "京都市・五條楽園",
+      "links": [
+        {
+          "label": "マンスリープラン",
+          "url": "https://unknown.kyoto/plan/monthly/",
+          "ok": true,
+          "status": 200,
+          "note": "ok"
+        },
+        {
+          "label": "コワーキング",
+          "url": "https://unknown.kyoto/coworking/",
+          "ok": true,
+          "status": 200,
+          "note": "ok"
+        }
+      ]
+    },
+    {
+      "name": "みやうら御殿",
+      "pref": "愛媛",
+      "loc": "今治市・大三島（しまなみ）",
+      "links": [
+        {
+          "label": "施設情報",
+          "url": "https://www.go-nagano.net/accommodation/id20858",
+          "ok": true,
+          "status": 200,
+          "note": "ok"
+        }
+      ]
+    },
+    {
+      "name": "ゲストハウス エスペランサ",
+      "pref": "沖縄",
+      "loc": "沖縄市/うるま市・コザ十字路 徒歩3分",
+      "links": [
+        {
+          "label": "長期滞在ページ",
+          "url": "http://esperanza.okinawa/long_stay.html",
+          "ok": true,
+          "status": 200,
+          "note": "ok"
+        }
+      ]
+    },
+    {
+      "name": "ゲストハウス雷鳥 / まある",
+      "pref": "長野",
+      "loc": "松江市 / 小布施町",
+      "links": [
+        {
+          "label": "長野県公式",
+          "url": "https://www.go-nagano.net/accommodation/id20858",
+          "ok": true,
+          "status": 200,
+          "note": "ok"
+        }
+      ]
+    },
+    {
+      "name": "ADDress（住まいのサブスク）",
+      "pref": "全国",
+      "loc": "全国200拠点超（自社＋提携）",
+      "links": [
+        {
+          "label": "公式サイト",
+          "url": "https://address.love/",
+          "ok": true,
+          "status": 200,
+          "note": "ok"
+        }
+      ]
+    },
+    {
+      "name": "LivingAnywhere Commons",
+      "pref": "全国",
+      "loc": "全国各地（福岡・岡山ほか）",
+      "links": [
+        {
+          "label": "公式サイト",
+          "url": "https://livinganywherecommons.com/",
+          "ok": true,
+          "status": 200,
+          "note": "ok"
+        }
+      ]
+    }
+  ]
+}
