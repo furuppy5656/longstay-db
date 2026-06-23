@@ -1,8 +1,8 @@
 {
-  "checked_at": "2026-06-24T07:34:35+09:00",
+  "checked_at": "2026-06-24T07:40:21+09:00",
   "total_facilities": 37,
   "total_links": 42,
-  "suspicious_count": 4,
+  "suspicious_count": 1,
   "results": [
     {
       "name": "水戸宿泊交流場",
@@ -157,11 +157,11 @@
       "loc": "奄美大島・笠利",
       "links": [
         {
-          "label": "BIGLOBE旅行",
-          "url": "https://travel.biglobe.ne.jp/onsen/selection/guesthouse/pref46/",
-          "ok": false,
-          "status": null,
-          "note": "URLError: [Errno 54] Connection reset by peer"
+          "label": "公式（伝泊 赤木名）",
+          "url": "https://den-paku.com/portfolio-item/hotel_amami",
+          "ok": true,
+          "status": 200,
+          "note": "ok"
         }
       ]
     },
@@ -311,11 +311,11 @@
       "loc": "周防大島町（瀬戸内の島）",
       "links": [
         {
-          "label": "山口県宿一覧",
-          "url": "https://www.clipit.jp/yamaguchi/minshuku/",
-          "ok": false,
-          "status": null,
-          "note": "URLError: timed out"
+          "label": "周防大島町 宿泊一覧",
+          "url": "https://www.town.suo-oshima.lg.jp/soshiki/7/1783.html",
+          "ok": true,
+          "status": 200,
+          "note": "ok"
         }
       ]
     },
@@ -388,11 +388,11 @@
       "loc": "隠岐郡（離島）",
       "links": [
         {
-          "label": "じゃらん",
-          "url": "https://www.jalan.net/yad347894/",
-          "ok": false,
-          "status": 404,
-          "note": "HTTPError 404"
+          "label": "公式サイト",
+          "url": "https://www.oki-katsumaya.com/",
+          "ok": true,
+          "status": 200,
+          "note": "ok"
         }
       ]
     },
