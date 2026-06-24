@@ -90,6 +90,34 @@
   .note b { color: var(--ink); }
   .note p { margin-bottom: 9px; }
   .note p:last-child { margin-bottom: 0; }
+
+  /* メンテナンス（更新）パネル */
+  .maint { margin-top: 22px; padding: 15px; background: var(--card); border: 1px solid var(--line); border-radius: 12px; }
+  .maint h2 { font-size: 13px; font-weight: 800; margin-bottom: 4px; }
+  .maint .desc { font-size: 11px; color: var(--sub); line-height: 1.7; margin-bottom: 11px; }
+  .maint-btns { display: flex; flex-wrap: wrap; gap: 8px; }
+  .mbtn {
+    font-size: 12.5px; font-weight: 700; padding: 9px 14px; border-radius: 9px;
+    border: 1.5px solid var(--accent); background: var(--accent); color: #fff;
+    cursor: pointer; -webkit-appearance: none;
+  }
+  .mbtn.sub { background: var(--card); color: var(--accent); }
+  .mbtn.ai { background: var(--gold); border-color: var(--gold); }
+  .mbtn:disabled { opacity: .5; cursor: default; }
+  .maint-out { display: none; margin-top: 12px; font-size: 12px; line-height: 1.7; }
+  .maint-out.show { display: block; }
+  .maint-out .stat { font-weight: 700; margin-bottom: 7px; }
+  .maint-out .stat.ok { color: var(--accent-ink); }
+  .maint-out .stat.warn { color: #b3261e; }
+  .maint-out pre {
+    white-space: pre-wrap; word-break: break-word; background: var(--paper);
+    border: 1px solid var(--line); border-radius: 8px; padding: 10px;
+    font-size: 11px; line-height: 1.65; max-height: 320px; overflow: auto;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  }
+  .maint-out a { color: var(--accent); }
+  .spin { display: inline-block; animation: spin 1s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
 </style>
 </head>
 <body>
@@ -125,6 +153,19 @@
     <p>※ <b>収録方針</b>：関東・九州・中国地方は各県3施設前後を目安に、個室＋仕事環境＋地域交流の観点で厳選。その他地域は代表例を掲載しています。全国チェーン（ADDress / LivingAnywhere Commons / HafH）は複数県に拠点があります。</p>
     <p>※ <b>「コワーキング」</b>タグは館内に作業スペースがある宿、<b>「個室」</b>は個室タイプの部屋がある宿、<b>「地域交流」</b>はカフェ/バー/イベント等で地元と混ざる仕掛けがある宿です。<b>「ADDress連携」</b>はADDress会員が定額で使える拠点です。</p>
     <p>※ 料金・空室・最低滞在日数・室内デスクの有無などは変動します。長期＋仕事前提なら、予約前にWi-Fi実測速度・室内デスク・オンライン会議できる場所を直接確認するのが確実です。</p>
+  </div>
+
+  <div class="maint">
+    <h2>🛠 内容のメンテナンス</h2>
+    <p class="desc">
+      公式リンクの死活チェックと、AIによるデータ最新化をこの場で実行できます。
+      （ローカルサーバ経由でのみ動作。AI更新は数分かかり、変更はgitに自動コミットされます）
+    </p>
+    <div class="maint-btns">
+      <button class="mbtn sub" id="btn-check">🔗 リンクをチェック</button>
+      <button class="mbtn ai" id="btn-ai">🤖 AIで最新化を依頼</button>
+    </div>
+    <div class="maint-out" id="maint-out"></div>
   </div>
 
 </div>
@@ -238,6 +279,84 @@ async function loadData(){
 }
 
 loadData();
+
+// ---- メンテナンス（リンクチェック / AI更新）----
+const out = document.getElementById('maint-out');
+const btnCheck = document.getElementById('btn-check');
+const btnAi = document.getElementById('btn-ai');
+
+function showOut(html){ out.className = 'maint-out show'; out.innerHTML = html; }
+function esc(s){ return (s||'').replace(/[&<>]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c])); }
+
+btnCheck.onclick = async () => {
+  btnCheck.disabled = true;
+  showOut('<div class="stat"><span class="spin">⏳</span> リンクをチェック中…</div>');
+  try {
+    const res = await fetch('/api/check-links', { method:'POST' });
+    const d = await res.json();
+    if (!d.ok) throw new Error(d.stderr || d.error || 'チェックに失敗しました');
+    const susp = d.suspicious_count ?? '?';
+    const cls = susp === 0 ? 'ok' : 'warn';
+    const wl = d.whitelisted_count ? `／許容リスト ${d.whitelisted_count} 件` : '';
+    showOut(
+      `<div class="stat ${cls}">${susp === 0 ? '✅' : '⚠️'} 要確認: ${susp} 件${wl}`
+      + `（${d.total_links} リンク／${d.total_facilities} 施設・${esc(d.checked_at||'')}）</div>`
+      + `<pre>${esc(d.report_md || '')}</pre>`);
+  } catch (e) {
+    showOut(`<div class="stat warn">❌ ${esc(e.message)}</div>`);
+  } finally {
+    btnCheck.disabled = false;
+  }
+};
+
+let aiPoll = null;
+btnAi.onclick = async () => {
+  if (!confirm('AIがWebで各宿の現状を確認し、data.json を自動更新します（数分／変更はgitにコミット）。実行しますか？')) return;
+  btnAi.disabled = true; btnCheck.disabled = true;
+  showOut('<div class="stat"><span class="spin">⏳</span> AI更新を開始しています…</div>');
+  try {
+    const res = await fetch('/api/ai-update', { method:'POST' });
+    const d = await res.json();
+    if (!d.started) { showOut(`<div class="stat warn">⚠️ ${esc(d.message||'すでに実行中です')}</div>`); reEnable(); return; }
+    pollAi();
+  } catch (e) {
+    showOut(`<div class="stat warn">❌ ${esc(e.message)}</div>`); reEnable();
+  }
+};
+
+function reEnable(){ btnAi.disabled = false; btnCheck.disabled = false; }
+
+async function pollAi(){
+  clearTimeout(aiPoll);
+  try {
+    const d = await (await fetch('/api/ai-update/status', { cache:'no-store' })).json();
+    const elapsed = d.started_at ? `（開始 ${esc(d.started_at)}）` : '';
+    if (d.state === 'running') {
+      showOut(`<div class="stat"><span class="spin">⏳</span> AIが最新化中…${elapsed}</div>`
+        + `<pre>${esc(d.log_tail || '')}</pre>`);
+      aiPoll = setTimeout(pollAi, 3000);
+    } else if (d.state === 'done') {
+      showOut(`<div class="stat ok">✅ 更新が完了しました。最新データを反映します。</div>`
+        + `<pre>${esc(d.summary || '')}</pre>`);
+      reEnable();
+      loadData(); // data.json を読み直して画面更新
+    } else if (d.state === 'error') {
+      showOut(`<div class="stat warn">❌ 更新に失敗しました</div>`
+        + `<pre>${esc(d.error || d.log_tail || '')}</pre>`);
+      reEnable();
+    } else {
+      reEnable();
+    }
+  } catch (e) {
+    showOut(`<div class="stat warn">❌ 状態取得に失敗: ${esc(e.message)}</div>`);
+    reEnable();
+  }
+}
+
+// 初回ロード時、前回のAI更新が走っていれば進捗を拾う
+fetch('/api/ai-update/status', { cache:'no-store' }).then(r=>r.json()).then(d=>{
+  if (d.state === 'running') { btnAi.disabled = true; btnCheck.disabled = true; pollAi(); }
+}).catch(()=>{});
 </script>
 </body>
 </html>

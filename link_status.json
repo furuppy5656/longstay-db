@@ -1,5 +1,5 @@
 {
-  "checked_at": "2026-06-24T08:01:45+09:00",
+  "checked_at": "2026-06-24T10:30:04+09:00",
   "total_facilities": 37,
   "total_links": 44,
   "suspicious_count": 0,
@@ -581,8 +581,8 @@
           "label": "公式サイト",
           "url": "https://www.miyauragoten.com/",
           "ok": true,
-          "status": 403,
-          "note": "HTTPError 403",
+          "status": 200,
+          "note": "ok",
           "whitelisted": false,
           "whitelist_note": ""
         }

@@ -12,13 +12,17 @@
 ## ファイル構成
 ```
 ~/services/longstay-db/
-├── index.html               … UI本体（data.json を fetch して描画）
+├── index.html               … UI本体（data.json を fetch して描画＋メンテボタン）
 ├── data.json                … 施設データ（37件）。★編集対象はここ
+├── server.py                … ローカルサーバ（静的配信＋更新API）。標準ライブラリのみ
+├── ai_update.py             … AI更新ワーカー（ローカルclaudeでdata.json最新化）
 ├── check_links.py           … リンク死活チェッカー
 ├── link_status.json         … check_links.py の生出力（最終チェック日時つき）
 ├── link_report.md           … 要確認リストのMarkdownレポート
+├── ai_update_result.md      … 直近AI更新の変更サマリ（ボタン押下時に生成）
 ├── start-longstay-db.command… サーバ起動スクリプト（ダブルクリック可）
-├── server.log               … サーバのアクセス/エラーログ
+├── server.log               … サーバのアクセス/エラーログ（gitignore）
+├── ai_update.log            … AI更新の実行ログ（gitignore）
 ├── index.html.bak.YYYYMMDD  … リファクタ前のバックアップ
 ├── README.md                … 概要・GitHub Pages無効化手順
 └── CLAUDE.md                … このファイル
@@ -30,10 +34,28 @@
 ## サーバの起動 / 停止
 - **起動**: `start-longstay-db.command` をダブルクリック（または
   `bash ~/services/longstay-db/start-longstay-db.command`）。
-  - `python3 -m http.server 5055` を nohup でバックグラウンド起動。二重起動はしない。
+  - `python3 server.py 5055` を nohup でバックグラウンド起動。二重起動はしない。
   - ログは `server.log`。
-- **停止**: `pkill -f 'http.server 5055'`
+- **停止**: `pkill -f 'server.py 5055'`
 - **ポート**: `5055`（既存サービス 5050/8090/8501/3000/7799/8787 と非衝突）。
+- `server.py` は静的配信に加え、ページの「メンテナンス」ボタン用APIを提供する
+  （標準ライブラリのみ・追加インストール不要）。
+
+## ページからの更新（メンテナンスボタン）
+ページ下部「🛠 内容のメンテナンス」に2つのボタン。ローカルサーバ経由でのみ動作。
+- **🔗 リンクをチェック** → `POST /api/check-links` → `check_links.py` を実行し、
+  要確認リスト（link_report.md）をその場に表示。data.json は変更しない（数秒）。
+- **🤖 AIで最新化を依頼** → `POST /api/ai-update` → `ai_update.py` をバックグラウンド起動。
+  ローカル `claude` CLI（サブスク=無課金）が点検→各宿をWeb確認→`data.json`を更新。
+  進捗はページがポーリング表示し、完了で自動リロード（数分）。
+  - 安全策: 実行前に `data.json.bak.<日時>` を退避、更新後にJSON妥当性を検証（壊れたら復元）、
+    変更があれば **git に自動コミット**（`git revert`/`git checkout` で戻せる）。
+  - claude には Bash を渡さず Read/Edit/Write/WebSearch/WebFetch/Grep/Glob のみ許可
+    （Web取得先からのプロンプトインジェクションでシェルを叩かせない設計）。
+  - **前提**: 一度ターミナルで `claude` → `/login`（Pro/Max。API keyではない）が必要。
+    未ログインだとAI更新はエラーになる（`feature_local_claude_subscription` 参照）。
+  - AIの変更は**鵜呑みにせず**、完了後にサマリ（ai_update_result.md）を確認すること。
+    推測URLが混じる可能性があるため、重要な変更は人手/Claude Codeで裏取りを。
 
 ## アクセスURL
 - ローカル: `http://localhost:5055/`

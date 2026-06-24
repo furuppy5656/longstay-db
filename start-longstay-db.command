@@ -16,7 +16,8 @@ cd "$DIR"
 if lsof -nP -iTCP:"$PORT" -sTCP:LISTEN >/dev/null 2>&1; then
   echo "✅ すでに起動中です（ポート $PORT）。"
 else
-  nohup python3 -m http.server "$PORT" >> "$LOG" 2>&1 &
+  # server.py = 静的配信 + 更新API（リンク点検 / AI最新化）。標準ライブラリのみ。
+  nohup python3 "$DIR/server.py" "$PORT" >> "$LOG" 2>&1 &
   sleep 1
   echo "🚀 起動しました（ポート $PORT、PID $!）。ログ: $LOG"
 fi
@@ -26,5 +27,5 @@ echo "  ローカル:        http://localhost:$PORT/"
 echo "  Tailscale経由:   http://$TSIP:$PORT/"
 echo ""
 echo "  iPhone(Brave)からは上の Tailscale経由 URL（httpsではなくhttp）でアクセス。"
-echo "  停止: pkill -f 'http.server $PORT'"
+echo "  停止: pkill -f 'server.py $PORT'"
 echo ""
