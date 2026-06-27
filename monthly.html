@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>マンスリー物件 検索ランチャー｜レオパレス等を横断</title>
+<style>
+  :root {
+    --ink: #14171c; --sub: #696e77; --line: #e2e4e8; --paper: #eef0f3;
+    --card: #ffffff; --accent: #2b5f9e; --accent-soft: #e2ecf7; --accent-ink: #18395f;
+    --gold: #a9772a; --gold-soft: #f5ebd6; --chip: #eef0f3;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-text-size-adjust: 100%; }
+  body {
+    font-family: -apple-system, "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Noto Sans JP", sans-serif;
+    background: var(--paper); color: var(--ink); line-height: 1.65;
+    -webkit-font-smoothing: antialiased; padding-bottom: 60px;
+  }
+  .wrap { max-width: 760px; margin: 0 auto; padding: 0 14px; }
+  header { padding: 30px 0 14px; }
+  .eyebrow { font-size: 11px; letter-spacing: 0.16em; color: var(--accent); font-weight: 700; margin-bottom: 9px; }
+  h1 { font-size: 22px; font-weight: 800; line-height: 1.32; margin-bottom: 11px; letter-spacing: -0.01em; }
+  .lede { font-size: 13px; color: var(--sub); line-height: 1.75; }
+  .lede b { color: var(--ink); }
+  .backlink { display: inline-block; margin-top: 12px; font-size: 12px; font-weight: 700; color: var(--accent); text-decoration: none; }
+  .backlink::before { content: "← "; }
+
+  .controls { background: var(--paper); padding: 12px 0 10px; border-bottom: 1px solid var(--line); }
+  .filter-label { font-size: 10.5px; font-weight: 700; color: var(--sub); letter-spacing: 0.08em; margin-bottom: 6px; text-transform: uppercase; }
+  .region-block { margin-bottom: 9px; }
+  .region-name { font-size: 11px; font-weight: 700; color: var(--accent-ink); margin: 6px 0 4px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .chip {
+    font-size: 12.5px; font-weight: 600; padding: 5px 11px; border-radius: 16px;
+    background: var(--chip); color: var(--sub); border: 1px solid transparent;
+    cursor: pointer; user-select: none; transition: all .12s;
+  }
+  .chip:active { transform: scale(0.96); }
+  .chip.on { background: var(--accent); color: #fff; }
+
+  .result { margin-top: 16px; }
+  .result.hidden { display: none; }
+  .picked { font-size: 15px; font-weight: 800; margin-bottom: 4px; }
+  .picked b { color: var(--accent); }
+  .hint { font-size: 11.5px; color: var(--sub); margin-bottom: 12px; line-height: 1.7; }
+
+  .openall { width: 100%; font-size: 14px; font-weight: 800; padding: 12px; border-radius: 11px; border: none; background: var(--accent); color: #fff; cursor: pointer; margin-bottom: 12px; -webkit-appearance: none; }
+  .openall:active { opacity: .85; }
+
+  .portal {
+    display: flex; align-items: center; justify-content: space-between; gap: 10px;
+    background: var(--card); border: 1px solid var(--line); border-radius: 12px;
+    padding: 13px 14px; margin-bottom: 9px; text-decoration: none; color: var(--ink);
+  }
+  .portal:active { background: var(--accent-soft); }
+  .p-main { min-width: 0; }
+  .p-name { font-size: 14.5px; font-weight: 800; }
+  .p-note { font-size: 11px; color: var(--sub); margin-top: 2px; }
+  .p-go { font-size: 12px; font-weight: 800; color: var(--accent); white-space: nowrap; }
+  .p-go::after { content: " ↗"; }
+
+  .empty { text-align: center; padding: 40px 20px; color: var(--sub); font-size: 13px; }
+  .note { margin-top: 24px; padding: 15px; background: #e4e7ea; border-radius: 12px; font-size: 11.5px; line-height: 1.85; color: #4a4e54; }
+  .note b { color: var(--ink); }
+  .note p { margin-bottom: 8px; } .note p:last-child { margin-bottom: 0; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="eyebrow">MONTHLY APARTMENT · SEARCH LAUNCHER</div>
+    <h1>マンスリー物件 検索ランチャー<br><span style="font-size:13.5px;font-weight:700;color:var(--accent)">レオパレス等のポータルを都道府県で横断検索</span></h1>
+    <p class="lede">マンスリー物件は件数が膨大で毎日変動するため、データは持たず<b>主要ポータルの検索結果を一発で開く</b>方式です。都道府県を選ぶと、各ポータルの最新の物件一覧へ飛べます。<b>予算・期間・間取りは各ポータル側で絞り込み</b>してください（常に最新）。</p>
+    <a class="backlink" href="/">ロングステイ宿データベース（独立系・直予約）へ戻る</a>
+  </header>
+
+  <div class="controls">
+    <div class="filter-label">都道府県を選ぶ</div>
+    <div id="regions"></div>
+  </div>
+
+  <div class="result hidden" id="result">
+    <div class="picked" id="picked"></div>
+    <div class="hint">各ボタンで新しいタブにそのポータルの<b id="pref-label"></b>の物件一覧が開きます。市区町村・駅・予算・期間での絞り込みは開いた先で行えます。</div>
+    <button class="openall" id="openall">▶ 全ポータルをまとめて開く</button>
+    <div id="portals"></div>
+  </div>
+
+  <div class="empty" id="empty">↑ 都道府県を選ぶと、各ポータルの検索結果リンクが出ます。</div>
+
+  <div class="note">
+    <p>※ <b>このページは「ロングステイ宿データベース」とは別ツール</b>です。あちらは独立系・直予約のゲストハウス（手作業で厳選した37件）、こちらは<b>商用マンスリーマンション（レオパレス等）をポータル横断で探す</b>ためのランチャーです。</p>
+    <p>※ <b>掲載ポータル</b>：レオパレス21（自社物件）／LIFULL HOME'S マンスリー・マンスリーマンション.com・グッドマンスリー（各社物件を横断）／マンスリー48（首都圏＋愛知・福岡）。物件数・料金・空室は各ポータルの表示が最新です。</p>
+    <p>※ 「全ポータルをまとめて開く」はブラウザのポップアップブロックで一部開かないことがあります。その場合は各ボタンを個別にタップしてください。</p>
+  </div>
+
+</div>
+
+<script>
+// 都道府県（slug は各ポータル共通の標準ヘボン式・小文字。実URLで検証済み）
+const PREFS = [
+  ["北海道・東北", [["北海道","hokkaido"],["青森","aomori"],["岩手","iwate"],["宮城","miyagi"],["秋田","akita"],["山形","yamagata"],["福島","fukushima"]]],
+  ["関東", [["茨城","ibaraki"],["栃木","tochigi"],["群馬","gunma"],["埼玉","saitama"],["千葉","chiba"],["東京","tokyo"],["神奈川","kanagawa"]]],
+  ["中部", [["新潟","niigata"],["富山","toyama"],["石川","ishikawa"],["福井","fukui"],["山梨","yamanashi"],["長野","nagano"],["岐阜","gifu"],["静岡","shizuoka"],["愛知","aichi"]]],
+  ["近畿", [["三重","mie"],["滋賀","shiga"],["京都","kyoto"],["大阪","osaka"],["兵庫","hyogo"],["奈良","nara"],["和歌山","wakayama"]]],
+  ["中国・四国", [["鳥取","tottori"],["島根","shimane"],["岡山","okayama"],["広島","hiroshima"],["山口","yamaguchi"],["徳島","tokushima"],["香川","kagawa"],["愛媛","ehime"],["高知","kochi"]]],
+  ["九州・沖縄", [["福岡","fukuoka"],["佐賀","saga"],["長崎","nagasaki"],["熊本","kumamoto"],["大分","oita"],["宮崎","miyazaki"],["鹿児島","kagoshima"],["沖縄","okinawa"]]],
+];
+
+// ポータル定義。url(slug)=検索結果URL。prefs を指定したものは対応県のみ表示。
+const PORTALS = [
+  { name:"レオパレス21", note:"自社物件・全国（短期/マンスリープランあり）",
+    url: s => `https://www.leopalace21.com/properties/monthly/area/${s}` },
+  { name:"LIFULL HOME'S マンスリー", note:"大手ポータル・各社物件を横断",
+    url: s => `https://monthly.homes.jp/${s}/list` },
+  { name:"マンスリーマンション.com", note:"市区町村から絞り込み・全国",
+    url: s => `https://www.monthly-mansion.com/${s}/` },
+  { name:"グッドマンスリー", note:"市区町村から絞り込み・全国",
+    url: s => `https://www.good-monthly.com/${s}/search/` },
+  { name:"マンスリー48", note:"対応: 東京/神奈川/千葉/埼玉/愛知/福岡",
+    prefs:["tokyo","kanagawa","chiba","saitama","aichi","fukuoka"],
+    url: s => `https://monthly48.com/${s}/top` },
+];
+
+const regionsEl = document.getElementById('regions');
+const resultEl = document.getElementById('result');
+const emptyEl = document.getElementById('empty');
+const pickedEl = document.getElementById('picked');
+const prefLabelEl = document.getElementById('pref-label');
+const portalsEl = document.getElementById('portals');
+const openallBtn = document.getElementById('openall');
+
+let current = null; // {name, slug}
+
+PREFS.forEach(([region, prefs]) => {
+  const block = document.createElement('div');
+  block.className = 'region-block';
+  const rn = document.createElement('div');
+  rn.className = 'region-name'; rn.textContent = region;
+  const chips = document.createElement('div');
+  chips.className = 'chips';
+  prefs.forEach(([name, slug]) => {
+    const c = document.createElement('span');
+    c.className = 'chip'; c.textContent = name; c.dataset.slug = slug;
+    c.onclick = () => select(name, slug);
+    chips.appendChild(c);
+  });
+  block.appendChild(rn); block.appendChild(chips);
+  regionsEl.appendChild(block);
+});
+
+function applicablePortals(slug){
+  return PORTALS.filter(p => !p.prefs || p.prefs.includes(slug));
+}
+
+function select(name, slug){
+  current = { name, slug };
+  document.querySelectorAll('.chip').forEach(c => c.classList.toggle('on', c.dataset.slug === slug));
+  pickedEl.innerHTML = `<b>${name}</b> のマンスリー物件`;
+  prefLabelEl.textContent = name;
+  portalsEl.innerHTML = '';
+  applicablePortals(slug).forEach(p => {
+    const a = document.createElement('a');
+    a.className = 'portal'; a.href = p.url(slug); a.target = '_blank'; a.rel = 'noopener';
+    a.innerHTML = `<span class="p-main"><span class="p-name">${p.name}</span>`
+      + `<span class="p-note">${p.note}</span></span><span class="p-go">開く</span>`;
+    portalsEl.appendChild(a);
+  });
+  resultEl.classList.remove('hidden');
+  emptyEl.style.display = 'none';
+  resultEl.scrollIntoView({ behavior:'smooth', block:'start' });
+}
+
+openallBtn.onclick = () => {
+  if (!current) return;
+  applicablePortals(current.slug).forEach(p => window.open(p.url(current.slug), '_blank', 'noopener'));
+};
+</script>
+</body>
+</html>

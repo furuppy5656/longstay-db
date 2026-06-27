@@ -20,6 +20,7 @@
 ```
 ~/services/longstay-db/
 ├── index.html               … UI本体（data.json を fetch して描画＋メンテボタン）
+├── monthly.html             … 【別ツール】マンスリー物件 検索ランチャー（レオパレス等を都道府県で横断）
 ├── data.json                … 施設データのキャッシュ（37件）。Notion が「正」。直接編集も可だが基本はNotion
 ├── notion_sync.py           … Notion同期（pull/push/setup）。標準ライブラリのみ・pip不要。★連携の中核
 ├── notion_config.json       … Notion APIトークン/DB-ID（★gitignore・コミット禁止）
@@ -41,6 +42,21 @@
 - 施設データは以前 index.html にベタ書きだったが、保守性のため **data.json に外出し**した。
   index.html は起動時に `fetch('data.json')` で読む（→ **HTTPサーバ経由必須**。
   `file://` で開くと fetch がブロックされデータが出ない）。
+
+## 別ツール: マンスリー物件 検索ランチャー（monthly.html）
+同じサーバで配信する**独立した別ページ**。`http://100.67.251.19:5055/monthly.html`
+（index.html 上部からリンクあり）。本体の「独立系・直予約ゲストハウスDB」とは目的が違い、
+**レオパレス等の商用マンスリーマンションをポータル横断で探す**ためのもの。
+- データは持たない。**都道府県を選ぶ→各ポータルの検索結果URLを新規タブで開く**だけの純クライアント実装
+  （マンスリー物件は件数膨大・毎日変動のため、手作業キュレーションは非現実的＝ランチャー方式）。
+- 掲載ポータルと検証済みURL形式（`{pref}`=標準ヘボン式小文字。実URLで実在確認済み）:
+  - レオパレス21: `https://www.leopalace21.com/properties/monthly/area/{pref}`
+  - LIFULL HOME'S マンスリー: `https://monthly.homes.jp/{pref}/list`
+  - マンスリーマンション.com: `https://www.monthly-mansion.com/{pref}/`（市区町村は jyuusyo_cd=5桁JISコード）
+  - グッドマンスリー: `https://www.good-monthly.com/{pref}/search/`
+  - マンスリー48: `https://monthly48.com/{pref}/top`（対応6都府県=東京/神奈川/千葉/埼玉/愛知/福岡のみ表示）
+- ポータル追加/URL変更は monthly.html の `PORTALS` 配列を編集。**URLは推測せず実機で確認**してから足す。
+- 予算・期間・間取りの絞り込みは各ポータル側で行う前提（横断で確実に効かせるパラメータが無いため持たせない）。
 
 ## サーバの起動 / 停止
 - **起動**: `start-longstay-db.command` をダブルクリック（または
