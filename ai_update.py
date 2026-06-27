@@ -6,14 +6,19 @@ AI更新ワーカー: ローカル claude CLI（サブスク=無課金）で dat
 server.py の「🤖 AIで最新化」ボタンから呼ばれる。手動でも実行可:
     python3 ai_update.py
 
+データソースは **Notion が「正」**、data.json はキャッシュ。この処理は両者を一致させる。
+
 流れ:
+  0. Notion → data.json を pull（最新化）。Notion 未設定/到達不可なら既存 data.json で続行。
   1. data.json をバックアップ。
   2. check_links.py を実行（このスクリプトが回す → claude に Bash 権限を渡さない）。
   3. claude を -p（非対話）で起動。claude は link_report.md を読み、要確認施設を
      Web で確認して data.json を直し、変更内容を ai_update_result.md に書く。
      付与ツールは Read/Edit/Write/WebSearch/WebFetch/Grep/Glob のみ（Bashなし＝安全）。
   4. data.json が壊れていないか検証。壊れていればバックアップから復元。
-  5. 変更があれば git にコミット（revert で戻せる安全網）。
+  5. data.json → Notion を push（書き戻し）＋ pull（_notion_id/order を正規化）。
+     Notion 未設定/到達不可なら書き戻しはスキップ（ローカル更新は維持）。
+  6. 変更があれば git にコミット（revert で戻せる安全網）。
 
 前提: 一度ターミナルで `claude` → `/login`（Pro/Max。API keyではない）済みであること。
 """
@@ -70,6 +75,39 @@ def git(*args):
                           capture_output=True, text=True)
 
 
+def notion_pull_safe():
+    """Notion → data.json（best-effort）。設定が無ければ何もしない。戻り値: 件数 or None。"""
+    try:
+        import notion_sync
+        if not notion_sync.is_configured():
+            log("Notion 未設定。既存 data.json で続行します。")
+            return None
+        n = notion_sync.pull()
+        log(f"Notion から {n} 件を pull しました。")
+        return n
+    except Exception as e:  # noqa: BLE001
+        log(f"Notion pull に失敗（既存 data.json で続行）: {e}")
+        return None
+
+
+def notion_push_safe():
+    """data.json → Notion 書き戻し＋pullで正規化（best-effort）。戻り値: サマリ文字列 or None。"""
+    try:
+        import notion_sync
+        if not notion_sync.is_configured():
+            log("Notion 未設定。書き戻しはスキップします。")
+            return None
+        s = notion_sync.push()
+        n = notion_sync.pull()
+        msg = (f"Notion へ書き戻し: 新規 {s['created']} / 更新 {s['updated']} "
+               f"/ アーカイブ {s['archived']}（→ {n} 件に正規化）")
+        log(msg)
+        return msg
+    except Exception as e:  # noqa: BLE001
+        log(f"Notion 書き戻しに失敗（ローカル更新は維持）: {e}")
+        return f"⚠️ Notion 書き戻し失敗: {e}"
+
+
 PROMPT_TMPL = """\
 あなたはローカルのClaude Codeです。作業ディレクトリはこのフォルダ（ロングステイ宿データベース）。
 今日は {today} です。
@@ -87,6 +125,7 @@ PROMPT_TMPL = """\
      完全閉鎖が確実な場合のみ、その施設の要素ごと配列から削除してよい。
 3. 厳守事項:
    - data.json は JSON として壊さない。既存フィールド構成（name/pref/region/loc/tags/body/links/feat）を維持。
+   - 各要素に "_notion_id" があれば**絶対に消さない・書き換えない**（Notion同期の鍵）。施設を丸ごと削除する場合のみ、その要素ごと消えてよい。
    - links は ["表示名","URL"] の配列。Googleマップのリンクは index.html が自動生成するので data.json に入れない。
    - 推測でURLを書き換えない。検索/閲覧で確認できた変更だけ行う。確証が無ければ触らない。
    - data.json と ai_update_result.md 以外のファイルは変更しない。git操作はしない。
@@ -108,6 +147,10 @@ def main():
         return 1
 
     today = datetime.date.today().isoformat()
+
+    # 0) Notion を「正」として data.json を最新化（バックアップより前に行い、復元先を整える）
+    notion_pull_safe()
+
     ts = datetime.datetime.now().astimezone().strftime("%Y%m%d_%H%M%S")
     backup = os.path.join(HERE, f"data.json.bak.{ts}")
     shutil.copy2(DATA, backup)
@@ -157,11 +200,21 @@ def main():
     if not os.path.exists(RESULT):
         write_result("AI更新は完了しましたが、変更サマリは生成されませんでした。")
 
-    # 4) 変更があれば git コミット（バックアップは作業ツリーから除外）
+    # 5) data.json → Notion 書き戻し（Notionが「正」）＋ pull で正規化
+    push_msg = notion_push_safe()
+    if push_msg:
+        # 結果サマリ末尾に Notion 同期の結果を追記（人が後で確認できるように）
+        try:
+            with open(RESULT, "a", encoding="utf-8") as f:
+                f.write(f"\n---\n{push_msg}\n")
+        except OSError:
+            pass
+
+    # 6) 変更があれば git コミット（バックアップは作業ツリーから除外）
     changed = git("diff", "--quiet", "--", "data.json").returncode != 0
     if changed:
         git("add", "data.json", "ai_update_result.md")
-        c = git("commit", "-m", f"AI更新: data.json をリンク最新化 ({today})")
+        c = git("commit", "-m", f"AI更新: data.json をリンク最新化＋Notion同期 ({today})")
         log("変更を git にコミットしました。" if c.returncode == 0
             else f"git commit に失敗: {c.stderr.strip()}")
     else:

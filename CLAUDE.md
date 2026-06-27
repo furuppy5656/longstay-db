@@ -3,19 +3,30 @@
 全国の独立系ロングステイ宿（個室あり・長期割・地域交流があり、直予約できる宿）を
 検索・絞り込みできる単一ページWebアプリのCLAUDE.md（運用メモ）。
 **GitHub Pages公開は廃止し、ローカル（Tailscale経由）運用に切り替え済み**（2026-06-24）。
+**データは Notion を「正」、`data.json` はその読み出しキャッシュ**に変更（2026-06-27）。
 
 ## 概要・運用方針
 - 公開URL（GitHub Pages）は**使わない**。Macでローカルサーバを立て、Tailscale経由で
   iPhone(Brave)等から `http://` でアクセスする。
 - gitリポジトリはバックアップ兼バージョン管理として残す（push可）。公開ページとしては使わない。
+- **データソースは Notion DB が「正（マスター）」**。`data.json` はそれを `notion_sync.py` で
+  書き出したキャッシュで、`index.html` はこの `data.json` を fetch して描画する。
+  - 編集は **Notion アプリで行う**のが基本 → ページの「🔄 Notionから取り込み」or サーバ再起動で反映。
+  - Notion APIトークンは **`notion_config.json`（gitignore）にサーバ側保管**。ブラウザには出さない。
+  - 初回連携の手順は **`NOTION_SETUP.md`** を参照（Integration作成→親ページ接続→`notion_sync.py setup`）。
+  - Notion 未設定でも従来どおり `data.json` をそのまま配信して動く（連携は任意の上乗せ）。
 
 ## ファイル構成
 ```
 ~/services/longstay-db/
 ├── index.html               … UI本体（data.json を fetch して描画＋メンテボタン）
-├── data.json                … 施設データ（37件）。★編集対象はここ
-├── server.py                … ローカルサーバ（静的配信＋更新API）。標準ライブラリのみ
-├── ai_update.py             … AI更新ワーカー（ローカルclaudeでdata.json最新化）
+├── data.json                … 施設データのキャッシュ（37件）。Notion が「正」。直接編集も可だが基本はNotion
+├── notion_sync.py           … Notion同期（pull/push/setup）。標準ライブラリのみ・pip不要。★連携の中核
+├── notion_config.json       … Notion APIトークン/DB-ID（★gitignore・コミット禁止）
+├── notion_config.example.json … 上記の雛形（これをコピーして使う）
+├── NOTION_SETUP.md          … Notion連携の初回セットアップ手順書
+├── server.py                … ローカルサーバ（静的配信＋更新API＋起動時pull）。標準ライブラリのみ
+├── ai_update.py             … AI更新ワーカー（pull→claude編集→Notion書き戻し→pull→commit）
 ├── check_links.py           … リンク死活チェッカー
 ├── link_status.json         … check_links.py の生出力（最終チェック日時つき）
 ├── link_report.md           … 要確認リストのMarkdownレポート
@@ -42,14 +53,21 @@
   （標準ライブラリのみ・追加インストール不要）。
 
 ## ページからの更新（メンテナンスボタン）
-ページ下部「🛠 内容のメンテナンス」に2つのボタン。ローカルサーバ経由でのみ動作。
+ページ下部「🛠 内容のメンテナンス」に3つのボタン。ローカルサーバ経由でのみ動作。
+- **🔄 Notionから取り込み** → `POST /api/notion-pull` → `notion_sync.pull()` を実行し、
+  Notion DB の内容で `data.json` を上書きして画面を再描画。Notionアプリで編集した後に押す。
+  （Notion未設定なら丁寧なエラーを返すだけで他機能は動く）
 - **🔗 リンクをチェック** → `POST /api/check-links` → `check_links.py` を実行し、
   要確認リスト（link_report.md）をその場に表示。data.json は変更しない（数秒）。
 - **🤖 AIで最新化を依頼** → `POST /api/ai-update` → `ai_update.py` をバックグラウンド起動。
-  ローカル `claude` CLI（サブスク=無課金）が点検→各宿をWeb確認→`data.json`を更新。
+  ローカル `claude` CLI（サブスク=無課金）が点検→各宿をWeb確認→`data.json`を更新→**Notionへ書き戻し**。
   進捗はページがポーリング表示し、完了で自動リロード（数分）。
+  - フロー: ①Notion pull(最新化) ②`data.json`バックアップ ③check_links ④claude編集
+    ⑤JSON妥当性検証(壊れたら復元) ⑥**Notion push(書き戻し)＋pull(正規化)** ⑦git自動コミット。
   - 安全策: 実行前に `data.json.bak.<日時>` を退避、更新後にJSON妥当性を検証（壊れたら復元）、
     変更があれば **git に自動コミット**（`git revert`/`git checkout` で戻せる）。
+    Notion 未設定/到達不可なら書き戻しはスキップし、ローカル更新だけ残す（処理は止めない）。
+  - claude には `_notion_id`（同期の鍵）を消すなと明示済み。
   - claude には Bash を渡さず Read/Edit/Write/WebSearch/WebFetch/Grep/Glob のみ許可
     （Web取得先からのプロンプトインジェクションでシェルを叩かせない設計）。
   - **前提**: 一度ターミナルで `claude` → `/login`（Pro/Max。API keyではない）が必要。
@@ -62,7 +80,29 @@
 - **Tailscale経由（iPhone等）**: `http://100.67.251.19:5055/`
   - Brave等で **http://**（httpsではない）。AC電源時はスリープしない設定済み。
 
-## 施設データ（data.json）の編集
+## Notion 同期（notion_sync.py）
+Notion が「正」、`data.json` はキャッシュ。同期は標準ライブラリのみの `notion_sync.py` が担う
+（pip不要・依存ゼロ。Notion API は urllib で直接叩く）。設定は `notion_config.json`（gitignore）。
+
+```
+python3 notion_sync.py setup [親ページID]  # 初回: DB作成＋37件投入（NOTION_SETUP.md 参照）
+python3 notion_sync.py pull                # Notion → data.json（キャッシュ更新）
+python3 notion_sync.py push                # data.json → Notion（upsert＋不在ページarchive）→pull正規化
+python3 notion_sync.py selftest            # 変換ロジックの自己テスト（通信なし）
+```
+
+- **プロパティ対応**: name(Title) / pref・region(Select) / tags(Multi-select) /
+  loc・body(Rich text) / feat(Checkbox) / order(Number,並び順) /
+  **links は Rich text に JSON文字列**（`[["表示名","URL"],...]`）で完全往復。
+- **upsert の鍵**: 各レコードの `_notion_id`（NotionページID）。pull で自動付与され data.json に残る。
+  無い場合は `name` で突合。`index.html` は `_notion_id` を無視して描画する。
+- **server.py 起動時**に best-effort で pull（未設定/到達不可なら既存 data.json を配信）。
+- 詳しい初回手順とトラブルシュートは **`NOTION_SETUP.md`**。
+
+## 施設データの編集（基本は Notion アプリ、直接 data.json も可）
+**推奨は Notion アプリで編集** → 「🔄 Notionから取り込み」or サーバ再起動で反映。
+緊急時は `data.json` を直接編集してもよいが、その場合は `python3 notion_sync.py push` で
+Notion に書き戻すこと（さもないと次の pull/起動時pullで上書きされ消える）。
 配列の各要素が1施設。スキーマ:
 
 | フィールド | 型 | 意味 |

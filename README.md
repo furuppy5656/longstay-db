@@ -8,13 +8,20 @@
 > 閲覧するローカル運用に切り替えました（2026-06-24）。
 > リポジトリはバックアップ兼バージョン管理として残しています。
 
+## データソース
+**Notion DB が「正（マスター）」**、`data.json` はその読み出しキャッシュです（2026-06-27〜）。
+施設の編集は Notion アプリで行い、ページの「🔄 Notionから取り込み」で反映します。
+初回連携の手順は [NOTION_SETUP.md](NOTION_SETUP.md) を参照（Notion未設定でも `data.json` 単体で動きます）。
+APIトークンは `notion_config.json`（gitignore）にサーバ側保管し、ブラウザには出しません。
+
 ## 使い方（ローカル運用）
 1. `start-longstay-db.command` をダブルクリックしてサーバ起動（ポート5055）。
+   起動時に Notion から最新データを取り込みます（未設定なら既存 `data.json` を配信）。
 2. ブラウザで開く:
    - Mac: `http://localhost:5055/`
    - iPhone等(Brave): `http://100.67.251.19:5055/`（Tailscale経由・**http**）
 
-詳しい運用・データ編集・リンクチェックの手順は [CLAUDE.md](CLAUDE.md) を参照。
+詳しい運用・データ編集・リンクチェック・Notion同期の手順は [CLAUDE.md](CLAUDE.md) を参照。
 
 ## GitHub Pages を無効化する手順（ブラウザ操作）
 ローカル運用に切り替えたため、GitHub側のPagesを無効化します（任意・推奨）:

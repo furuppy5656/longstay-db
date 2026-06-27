@@ -158,10 +158,13 @@
   <div class="maint">
     <h2>🛠 内容のメンテナンス</h2>
     <p class="desc">
-      公式リンクの死活チェックと、AIによるデータ最新化をこの場で実行できます。
+      データは <b>Notion が「正」</b>（このページが読む data.json はそのキャッシュ）。
+      Notion で直接編集したら「🔄 Notionから取り込み」で反映できます。
+      公式リンクの死活チェックと、AIによる最新化（Notionへ書き戻し）もこの場で実行可能。
       （ローカルサーバ経由でのみ動作。AI更新は数分かかり、変更はgitに自動コミットされます）
     </p>
     <div class="maint-btns">
+      <button class="mbtn sub" id="btn-pull">🔄 Notionから取り込み</button>
       <button class="mbtn sub" id="btn-check">🔗 リンクをチェック</button>
       <button class="mbtn ai" id="btn-ai">🤖 AIで最新化を依頼</button>
     </div>
@@ -282,11 +285,28 @@ loadData();
 
 // ---- メンテナンス（リンクチェック / AI更新）----
 const out = document.getElementById('maint-out');
+const btnPull = document.getElementById('btn-pull');
 const btnCheck = document.getElementById('btn-check');
 const btnAi = document.getElementById('btn-ai');
 
 function showOut(html){ out.className = 'maint-out show'; out.innerHTML = html; }
 function esc(s){ return (s||'').replace(/[&<>]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c])); }
+
+btnPull.onclick = async () => {
+  btnPull.disabled = true;
+  showOut('<div class="stat"><span class="spin">⏳</span> Notion から取り込み中…</div>');
+  try {
+    const res = await fetch('/api/notion-pull', { method:'POST' });
+    const d = await res.json();
+    if (!d.ok) throw new Error(d.error || '取り込みに失敗しました');
+    showOut(`<div class="stat ok">✅ Notion から ${d.count} 件を取り込みました（${esc(d.pulled_at||'')}）。</div>`);
+    await loadData(); // data.json を読み直して画面更新
+  } catch (e) {
+    showOut(`<div class="stat warn">❌ ${esc(e.message)}</div>`);
+  } finally {
+    btnPull.disabled = false;
+  }
+};
 
 btnCheck.onclick = async () => {
   btnCheck.disabled = true;
@@ -312,7 +332,7 @@ btnCheck.onclick = async () => {
 let aiPoll = null;
 btnAi.onclick = async () => {
   if (!confirm('AIがWebで各宿の現状を確認し、data.json を自動更新します（数分／変更はgitにコミット）。実行しますか？')) return;
-  btnAi.disabled = true; btnCheck.disabled = true;
+  btnAi.disabled = true; btnCheck.disabled = true; btnPull.disabled = true;
   showOut('<div class="stat"><span class="spin">⏳</span> AI更新を開始しています…</div>');
   try {
     const res = await fetch('/api/ai-update', { method:'POST' });
@@ -324,7 +344,7 @@ btnAi.onclick = async () => {
   }
 };
 
-function reEnable(){ btnAi.disabled = false; btnCheck.disabled = false; }
+function reEnable(){ btnAi.disabled = false; btnCheck.disabled = false; btnPull.disabled = false; }
 
 async function pollAi(){
   clearTimeout(aiPoll);
@@ -355,7 +375,7 @@ async function pollAi(){
 
 // 初回ロード時、前回のAI更新が走っていれば進捗を拾う
 fetch('/api/ai-update/status', { cache:'no-store' }).then(r=>r.json()).then(d=>{
-  if (d.state === 'running') { btnAi.disabled = true; btnCheck.disabled = true; pollAi(); }
+  if (d.state === 'running') { btnAi.disabled = true; btnCheck.disabled = true; btnPull.disabled = true; pollAi(); }
 }).catch(()=>{});
 </script>
 </body>

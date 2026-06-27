@@ -1,0 +1,5 @@
+{
+  "token": "ntn_ここにIntegrationのInternal Integration Secretを貼る",
+  "parent_page_id": "DBを作りたいNotionページのID（URL末尾の32桁・初回setup用）",
+  "database_id": "（setup 実行後に自動で書き込まれる。最初は空でよい）"
+}

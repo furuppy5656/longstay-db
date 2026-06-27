@@ -8,6 +8,11 @@
 - POST /api/check-links : check_links.py を同期実行し、レポートを返す（数秒）
 - POST /api/ai-update   : ローカル claude CLI でデータ最新化をバックグラウンド実行（数分）
 - GET  /api/ai-update/status : 上記ジョブの進捗・ログ・結果を返す（ページがポーリング）
+- POST /api/notion-pull : Notion DB → data.json（キャッシュ更新）。Notionが「正」。
+
+データソースは Notion を「正」とし、data.json はその読み出しキャッシュ。
+サーバ起動時に best-effort で Notion から pull して data.json を最新化する
+（notion_config.json 未設定や Notion 到達不可なら既存 data.json を配る）。
 
 起動: python3 server.py [PORT]   （省略時 5055）
 """
@@ -126,6 +131,36 @@ def ai_update_status():
     return snap
 
 
+def run_notion_pull():
+    """Notion DB → data.json（キャッシュ更新）。標準ライブラリのみの notion_sync を使う。"""
+    try:
+        import notion_sync
+    except Exception as e:  # noqa: BLE001
+        return {"ok": False, "error": f"notion_sync の読み込みに失敗: {e}"}
+    if not notion_sync.is_configured():
+        return {"ok": False,
+                "error": "Notion 未設定です。notion_config.json に token / database_id を"
+                         "設定し、`python3 notion_sync.py setup` を実行してください。"}
+    try:
+        n = notion_sync.pull()
+        return {"ok": True, "count": n, "pulled_at": _now()}
+    except Exception as e:  # noqa: BLE001
+        return {"ok": False, "error": f"{type(e).__name__}: {e}"}
+
+
+def startup_pull():
+    """起動時の best-effort pull。失敗しても既存 data.json をそのまま配る。"""
+    try:
+        import notion_sync
+        if not notion_sync.is_configured():
+            print("ℹ️  Notion 未設定（notion_config.json）。既存 data.json を配信します。", flush=True)
+            return
+        n = notion_sync.pull()
+        print(f"🔄 起動時 Notion pull: {n} 件を data.json に反映しました。", flush=True)
+    except Exception as e:  # noqa: BLE001
+        print(f"⚠️  起動時 Notion pull に失敗（既存 data.json を配信）: {e}", flush=True)
+
+
 class Handler(http.server.SimpleHTTPRequestHandler):
     def __init__(self, *a, **kw):
         super().__init__(*a, directory=HERE, **kw)
@@ -152,6 +187,9 @@ class Handler(http.server.SimpleHTTPRequestHandler):
         try:
             if path == "/api/check-links":
                 return self._send_json(run_check_links())
+            if path == "/api/notion-pull":
+                res = run_notion_pull()
+                return self._send_json(res, code=200 if res.get("ok") else 502)
             if path == "/api/ai-update":
                 started = start_ai_update()
                 return self._send_json(
@@ -173,6 +211,7 @@ class Server(socketserver.ThreadingMixIn, http.server.HTTPServer):
 
 def main():
     os.chdir(HERE)
+    startup_pull()  # Notion を「正」とし、起動時に data.json を最新化（best-effort）
     with Server(("0.0.0.0", PORT), Handler) as httpd:
         print(f"ロングステイ宿DB サーバ起動: http://0.0.0.0:{PORT}/  (Ctrl-C で停止)")
         try:
