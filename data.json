@@ -15,7 +15,8 @@
         "公式サイト",
         "https://www.mito-shukuhaku-kouryuu-ba.com"
       ]
-    ]
+    ],
+    "_notion_id": "38c5dc09-91e2-81e3-98a9-e26c46632396"
   },
   {
     "name": "ゲストハウス＆コワーキング ほとり",
@@ -39,7 +40,8 @@
         "Instagram",
         "https://www.instagram.com/hotori_minakami/"
       ]
-    ]
+    ],
+    "_notion_id": "38c5dc09-91e2-8111-902d-f63089a58702"
   },
   {
     "name": "南房総ワーケーション 一棟貸し群",
@@ -58,7 +60,8 @@
         "南房総ワーケーション",
         "https://minamiboso-workation.jp/facilities"
       ]
-    ]
+    ],
+    "_notion_id": "38c5dc09-91e2-8195-a7d8-edb7c14c6980"
   },
   {
     "name": "ドゥカーレ ガーデンホテル九十九里",
@@ -76,7 +79,8 @@
         "公式サイト",
         "https://www.ducale-hotel.com/"
       ]
-    ]
+    ],
+    "_notion_id": "38c5dc09-91e2-8183-a550-c8ce93ac0b1d"
   },
   {
     "name": "HafH Fukuoka THE LIFE",
@@ -96,7 +100,8 @@
         "公式予約",
         "https://www.chillnn.com/182b5c5c81b209"
       ]
-    ]
+    ],
+    "_notion_id": "38c5dc09-91e2-81b1-9e15-fc657e315db1"
   },
   {
     "name": "UNPLAN Fukuoka",
@@ -114,7 +119,8 @@
         "公式サイト",
         "https://unplan.jp/fukuoka"
       ]
-    ]
+    ],
+    "_notion_id": "38c5dc09-91e2-81db-a563-f3960f665408"
   },
   {
     "name": "体験型民泊 村井屋",
@@ -134,7 +140,8 @@
         "公式サイト",
         "https://www.muraiya.com/"
       ]
-    ]
+    ],
+    "_notion_id": "38c5dc09-91e2-81f8-b2a8-ceaf8b6cd470"
   },
   {
     "name": "五島・地域拠点型レンタルスペース＋宿",
@@ -154,7 +161,8 @@
         "五島ワーケーション",
         "https://goto.nagasaki-tabinet.com/feature/osusume"
       ]
-    ]
+    ],
+    "_notion_id": "38c5dc09-91e2-81a0-a87b-cb6d0b8f8d27"
   },
   {
     "name": "菊池みらいベース",
@@ -174,7 +182,8 @@
         "公式サイト",
         "https://kikuchi.miraibase.net/"
       ]
-    ]
+    ],
+    "_notion_id": "38c5dc09-91e2-8176-97c3-faacbc450473"
   },
   {
     "name": "K-LOCAL つがれ（シェア＆ゲストハウス）",
@@ -193,7 +202,8 @@
         "長期滞在プラン",
         "https://k-local2020.com/sharehouse/"
       ]
-    ]
+    ],
+    "_notion_id": "38c5dc09-91e2-8123-9961-c625a31035dd"
   },
   {
     "name": "伝泊 奄美（まーぐん広場）",
@@ -213,14 +223,14 @@
         "公式（伝泊 赤木名）",
         "https://den-paku.com/portfolio-item/hotel_amami"
       ]
-    ]
+    ],
+    "_notion_id": "38c5dc09-91e2-8153-8c14-c2377c534c43"
   },
   {
     "name": "たみ ゲストハウス＆カフェ",
     "pref": "鳥取",
     "region": "中国",
     "loc": "湯梨浜町・東郷池畔（松崎駅）",
-    "feat": true,
     "tags": [
       "個室",
       "地域交流",
@@ -235,14 +245,15 @@
         "公式サイト",
         "https://www.tamitottori.com/"
       ]
-    ]
+    ],
+    "feat": true,
+    "_notion_id": "38c5dc09-91e2-81d9-a859-ee3eeca6d38d"
   },
   {
     "name": "Y Pub & Hostel TOTTORI",
     "pref": "鳥取",
     "region": "中国",
     "loc": "鳥取市・鳥取駅 徒歩5分",
-    "feat": true,
     "tags": [
       "個室",
       "地域交流",
@@ -256,7 +267,9 @@
         "公式サイト",
         "https://y-tottori.com/"
       ]
-    ]
+    ],
+    "feat": true,
+    "_notion_id": "38c5dc09-91e2-8142-b076-f96793893c8e"
   },
   {
     "name": "大山ゲストハウス寿庵",
@@ -275,7 +288,8 @@
         "公式サイト",
         "https://daisen-guesthouse-juan.com/"
       ]
-    ]
+    ],
+    "_notion_id": "38c5dc09-91e2-81d2-8fd6-db628423394e"
   },
   {
     "name": "有鄰庵（ゆうりんあん）",
@@ -294,7 +308,8 @@
         "公式サイト",
         "https://yuurin-an.jp/"
       ]
-    ]
+    ],
+    "_notion_id": "38c5dc09-91e2-815b-a878-da2073d3b5cc"
   },
   {
     "name": "宇野港編集室",
@@ -313,7 +328,8 @@
         "公式サイト",
         "https://uno-editors.jp/"
       ]
-    ]
+    ],
+    "_notion_id": "38c5dc09-91e2-81a3-954a-cc84c47fe31e"
   },
   {
     "name": "LivingAnywhere Commons 津山/真庭",
@@ -334,7 +350,8 @@
         "岡山拠点紹介",
         "https://livinganywherecommons.com/article/guest_house/202307250002/"
       ]
-    ]
+    ],
+    "_notion_id": "38c5dc09-91e2-81c1-9906-c5b6d965b519"
   },
   {
     "name": "尾道ゲストハウス いろは荘",
@@ -353,7 +370,8 @@
         "公式サイト",
         "https://irohasou.com/"
       ]
-    ]
+    ],
+    "_notion_id": "38c5dc09-91e2-81cf-b7ce-f9fe35b6d568"
   },
   {
     "name": "江田島 一棟貸し（自然素材の宿）",
@@ -371,7 +389,8 @@
         "旅色",
         "https://tabiiro.jp/yado/theme/ittogashi/ranking/saninsanyo/hiroshima/"
       ]
-    ]
+    ],
+    "_notion_id": "38c5dc09-91e2-8138-ad6a-f2a9feadd2a3"
   },
   {
     "name": "uzuhouse（ウズハウス）",
@@ -391,7 +410,8 @@
         "公式サイト",
         "https://uzuhouse.com/"
       ]
-    ]
+    ],
+    "_notion_id": "38c5dc09-91e2-819c-a445-c09f77b8ab46"
   },
   {
     "name": "萩ゲストハウス ruco",
@@ -409,7 +429,8 @@
         "公式サイト",
         "https://guesthouse-ruco.com/"
       ]
-    ]
+    ],
+    "_notion_id": "38c5dc09-91e2-81c2-8964-f715cafb0bb1"
   },
   {
     "name": "周防大島 古民家ゲストハウス",
@@ -428,7 +449,8 @@
         "周防大島町 宿泊一覧",
         "https://www.town.suo-oshima.lg.jp/soshiki/7/1783.html"
       ]
-    ]
+    ],
+    "_notion_id": "38c5dc09-91e2-812e-af62-ed8682ba7384"
   },
   {
     "name": "出雲ゲストハウス いとあん",
@@ -452,7 +474,8 @@
         "料金・部屋",
         "https://guesthouse-itoan.com/room-fee/"
       ]
-    ]
+    ],
+    "_notion_id": "38c5dc09-91e2-81c9-908f-f7debd92159f"
   },
   {
     "name": "ヴィラ出雲屋",
@@ -469,7 +492,8 @@
         "公式サイト",
         "https://villa-idumoya.com/"
       ]
-    ]
+    ],
+    "_notion_id": "38c5dc09-91e2-8132-a41e-d3deb38ec8a0"
   },
   {
     "name": "赭Soho（そほ）温泉津",
@@ -489,7 +513,8 @@
         "公式サイト",
         "https://soho.argnai.com/"
       ]
-    ]
+    ],
+    "_notion_id": "38c5dc09-91e2-8189-9a0f-f61c7eb53666"
   },
   {
     "name": "古民家ゲストハウス 湯るり",
@@ -509,7 +534,8 @@
         "公式サイト",
         "https://yururi-yunotsu.jp/"
       ]
-    ]
+    ],
+    "_notion_id": "38c5dc09-91e2-81f3-8137-f660c72d7e49"
   },
   {
     "name": "隠岐の宿処 勝馬屋の里",
@@ -528,14 +554,14 @@
         "公式サイト",
         "https://www.oki-katsumaya.com/"
       ]
-    ]
+    ],
+    "_notion_id": "38c5dc09-91e2-81e0-8ac7-dfa7ebe3f6f8"
   },
   {
     "name": "DELTA HOSTEL",
     "pref": "秋田",
     "region": "東北",
     "loc": "秋田市保戸野・原の町バス停 徒歩1分",
-    "feat": true,
     "tags": [
       "コワーキング",
       "個室",
@@ -553,7 +579,9 @@
         "Instagram",
         "https://www.instagram.com/deltahostel_akita/"
       ]
-    ]
+    ],
+    "feat": true,
+    "_notion_id": "38c5dc09-91e2-819e-a2c8-f4410df3dd45"
   },
   {
     "name": "ゲストハウス梅鉢",
@@ -571,14 +599,14 @@
         "公式サイト",
         "https://umebachi2009.com/"
       ]
-    ]
+    ],
+    "_notion_id": "38c5dc09-91e2-81c6-91cf-ca98d6f98677"
   },
   {
     "name": "LINNAS Kanazawa",
     "pref": "石川",
     "region": "北陸",
     "loc": "金沢市・近江町市場 徒歩2分",
-    "feat": true,
     "tags": [
       "コワーキング",
       "個室",
@@ -596,7 +624,9 @@
         "コワーキング",
         "https://e-office.space/spaces/hokuriku-koshinetsu/ishikawa/kanazawashi/kanazawa-by-linnas"
       ]
-    ]
+    ],
+    "feat": true,
+    "_notion_id": "38c5dc09-91e2-81aa-8219-d579dc726610"
   },
   {
     "name": "G-eight HOUSE",
@@ -614,14 +644,14 @@
         "情報ページ",
         "https://sharehouse.in/jpn/area/search/19/"
       ]
-    ]
+    ],
+    "_notion_id": "38c5dc09-91e2-816a-83de-c58279af4a59"
   },
   {
     "name": "UNKNOWN KYOTO",
     "pref": "京都",
     "region": "関西",
     "loc": "京都市・五條楽園",
-    "feat": true,
     "tags": [
       "コワーキング",
       "個室",
@@ -639,7 +669,9 @@
         "コワーキング",
         "https://unknown.kyoto/coworking/"
       ]
-    ]
+    ],
+    "feat": true,
+    "_notion_id": "38c5dc09-91e2-81c7-a755-f51ab1921010"
   },
   {
     "name": "みやうら御殿",
@@ -659,7 +691,8 @@
         "公式サイト",
         "https://www.miyauragoten.com/"
       ]
-    ]
+    ],
+    "_notion_id": "38c5dc09-91e2-81a2-af01-e599ec51de11"
   },
   {
     "name": "ゲストハウス エスペランサ",
@@ -677,7 +710,8 @@
         "長期滞在ページ",
         "http://esperanza.okinawa/long_stay.html"
       ]
-    ]
+    ],
+    "_notion_id": "38c5dc09-91e2-8152-86ee-dd24b788bca1"
   },
   {
     "name": "ゲストハウス雷鳥 / まある",
@@ -704,7 +738,8 @@
         "長野県公式まとめ",
         "https://www.go-nagano.net/accommodation/id20858"
       ]
-    ]
+    ],
+    "_notion_id": "38c5dc09-91e2-81a7-b27f-dad43f3c57a9"
   },
   {
     "name": "ADDress（住まいのサブスク）",
@@ -726,7 +761,8 @@
         "公式サイト",
         "https://address.love/"
       ]
-    ]
+    ],
+    "_notion_id": "38c5dc09-91e2-81ae-a817-db9a54fecb5b"
   },
   {
     "name": "LivingAnywhere Commons",
@@ -747,6 +783,7 @@
         "公式サイト",
         "https://livinganywherecommons.com/"
       ]
-    ]
+    ],
+    "_notion_id": "38c5dc09-91e2-812e-9a25-de08c7a1f6ba"
   }
 ]
