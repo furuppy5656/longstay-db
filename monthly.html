@@ -3,179 +3,522 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>マンスリー物件 検索ランチャー｜レオパレス等を横断</title>
+<title>マンスリー検索ランチャー</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@400;500;700;900&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --ink: #14171c; --sub: #696e77; --line: #e2e4e8; --paper: #eef0f3;
-    --card: #ffffff; --accent: #2b5f9e; --accent-soft: #e2ecf7; --accent-ink: #18395f;
-    --gold: #a9772a; --gold-soft: #f5ebd6; --chip: #eef0f3;
+  :root{
+    --ink:#16181d;--muted:#5c6058;--paper:#eef0ea;--panel:#ffffff;
+    --indigo:#1f3a5e;--indigo-soft:#e7edf4;--persimmon:#c75b39;--persimmon-dk:#a8442a;
+    --gold:#b07d1a;--gold-soft:#f5edd6;
+    --line:#d7dace;--line-strong:#bcc0b2;
+    --jp:"Zen Kaku Gothic New","Hiragino Kaku Gothic ProN","Noto Sans JP",system-ui,sans-serif;
+    --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
   }
-  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-text-size-adjust: 100%; }
-  body {
-    font-family: -apple-system, "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Noto Sans JP", sans-serif;
-    background: var(--paper); color: var(--ink); line-height: 1.65;
-    -webkit-font-smoothing: antialiased; padding-bottom: 60px;
+  *{box-sizing:border-box;}
+  html,body{margin:0;}
+  body{font-family:var(--jp);background:var(--paper);color:var(--ink);line-height:1.5;
+    -webkit-font-smoothing:antialiased;padding:clamp(16px,4vw,48px);}
+  .wrap{max-width:920px;margin:0 auto;}
+
+  header{margin-bottom:34px;}
+  .eyebrow{font-size:12px;letter-spacing:.32em;text-transform:uppercase;color:var(--indigo);
+    font-weight:700;margin:0 0 10px;display:flex;align-items:center;gap:10px;}
+  .eyebrow::before{content:"";width:26px;height:2px;background:var(--persimmon);display:inline-block;}
+  h1{font-size:clamp(28px,5vw,44px);font-weight:900;letter-spacing:-.01em;margin:0 0 12px;line-height:1.08;}
+  .lede{font-size:15px;color:var(--muted);max-width:60ch;margin:0;}
+
+  .step{display:flex;align-items:baseline;gap:12px;margin:30px 0 14px;}
+  .step .num{font-family:var(--mono);font-size:12px;font-weight:700;color:#fff;background:var(--indigo);
+    width:22px;height:22px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;
+    flex:0 0 auto;transform:translateY(2px);}
+  .step h2{font-size:16px;font-weight:700;margin:0;}
+  .step .hint{font-size:13px;color:var(--muted);margin:0;}
+
+  .tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;}
+  .tile{background:var(--panel);border:1.5px solid var(--line);border-radius:12px;padding:16px 16px 14px;
+    cursor:pointer;text-align:left;transition:border-color .14s,box-shadow .14s,transform .14s;
+    position:relative;font-family:var(--jp);}
+  .tile:hover{border-color:var(--line-strong);transform:translateY(-2px);}
+  .tile:focus-visible{outline:2px solid var(--indigo);outline-offset:2px;}
+  .tile .region-jp{font-size:24px;font-weight:900;letter-spacing:.02em;line-height:1;}
+  .tile .region-ro{font-family:var(--mono);font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.12em;margin-top:7px;}
+  .tile .region-tag{position:absolute;top:13px;right:13px;font-size:10px;font-weight:700;color:var(--indigo);
+    background:var(--indigo-soft);border-radius:20px;padding:3px 9px;letter-spacing:.04em;}
+  .tile[aria-pressed="true"]{border-color:var(--indigo);background:var(--indigo);box-shadow:0 6px 18px -8px rgba(31,58,94,.6);}
+  .tile[aria-pressed="true"] .region-jp{color:#fff;}
+  .tile[aria-pressed="true"] .region-ro{color:#aebfd4;}
+  .tile[aria-pressed="true"] .region-tag{background:rgba(255,255,255,.16);color:#dce6f1;}
+
+  .all-pref{display:flex;align-items:center;gap:10px;margin-top:14px;flex-wrap:wrap;}
+  .all-pref label{font-size:13px;color:var(--muted);}
+  select,input[type=text],textarea{font-family:var(--jp);font-size:14px;color:var(--ink);background:var(--panel);
+    border:1.5px solid var(--line);border-radius:9px;padding:9px 12px;}
+  select:focus,input:focus,textarea:focus{outline:2px solid var(--indigo);outline-offset:1px;border-color:var(--indigo);}
+
+  .listbox{margin-top:18px;display:none;}
+  .listbox.show{display:block;}
+  .listbox-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:9px;}
+  .listbox-head .label{font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);
+    display:flex;align-items:center;gap:7px;}
+  .listbox-head .label .star{color:var(--gold);}
+  .listbox-head .clear{font-size:12px;color:var(--muted);background:none;border:none;cursor:pointer;text-decoration:underline;font-family:var(--jp);}
+  .listbox-head .clear:hover{color:var(--persimmon-dk);}
+  .chips{display:flex;flex-wrap:wrap;gap:8px;}
+  .chip{font-family:var(--jp);font-size:13px;font-weight:500;color:var(--indigo);background:var(--panel);
+    border:1.5px solid var(--line);border-radius:20px;padding:6px 13px;cursor:pointer;
+    display:inline-flex;align-items:center;gap:8px;transition:border-color .14s;}
+  .chip:hover{border-color:var(--indigo);}
+  .chip .ts{font-family:var(--mono);font-size:10px;color:var(--muted);}
+  .chip.fav{border-color:var(--gold-soft);background:var(--gold-soft);color:var(--gold);}
+  .chip.fav:hover{border-color:var(--gold);}
+  .chip .x{font-size:13px;color:var(--muted);margin-left:1px;line-height:1;}
+  .chip .x:hover{color:var(--persimmon-dk);}
+
+  .city-row{display:flex;align-items:flex-start;gap:10px;flex-wrap:wrap;}
+  #cityNote{flex:1;min-width:220px;min-height:74px;resize:vertical;line-height:1.5;}
+  .city-side{display:flex;flex-direction:column;gap:8px;}
+  .btn{font-family:var(--jp);font-size:14px;font-weight:700;color:var(--indigo);background:#fff;
+    border:1.5px solid var(--indigo);border-radius:9px;padding:9px 16px;cursor:pointer;white-space:nowrap;
+    transition:background .14s,color .14s;}
+  .btn:hover{background:var(--indigo);color:#fff;}
+  .btn:disabled{border-color:var(--line-strong);color:var(--line-strong);cursor:not-allowed;background:#fff;}
+  .btn.fav{border-color:var(--gold);color:var(--gold);}
+  .btn.fav:hover{background:var(--gold);color:#fff;}
+  .btn.fav.on{background:var(--gold);color:#fff;}
+  .saved-flag{font-size:12px;color:var(--indigo);font-weight:700;opacity:0;transition:opacity .2s;align-self:center;}
+  .saved-flag.show{opacity:1;}
+
+  .deck{display:grid;gap:10px;}
+  .card{background:var(--panel);border:1.5px solid var(--line);border-radius:12px;padding:15px 16px;
+    display:grid;grid-template-columns:1fr auto;grid-template-rows:auto auto auto;gap:4px 14px;align-items:center;}
+  .card .name{font-size:16px;font-weight:700;grid-column:1;}
+  .card .use{font-size:12.5px;color:var(--muted);grid-column:1;}
+  .card .url{grid-column:1;font-family:var(--mono);font-size:11.5px;color:var(--indigo);background:var(--indigo-soft);
+    border-radius:7px;padding:6px 9px;margin-top:7px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .card .open{grid-column:2;grid-row:1 / span 2;align-self:center;font-family:var(--jp);font-size:14px;font-weight:700;
+    color:var(--indigo);background:#fff;border:1.5px solid var(--indigo);border-radius:9px;padding:9px 16px;
+    cursor:pointer;text-decoration:none;white-space:nowrap;transition:background .14s,color .14s;}
+  .card .open:hover{background:var(--indigo);color:#fff;}
+  .card .copy{grid-column:2;grid-row:3;justify-self:end;font-family:var(--jp);font-size:12px;color:var(--muted);
+    background:none;border:none;cursor:pointer;padding:4px 2px;text-decoration:underline;}
+  .card .copy:hover{color:var(--ink);}
+  .card.extra{border-style:dashed;}
+
+  .deck-bar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px;flex-wrap:wrap;}
+  .deck-bar .hint{font-size:13px;color:var(--muted);margin:0;}
+
+  /* shared segmented toggle (history sort / WR mode) */
+  .toggle{display:inline-flex;border:1.5px solid var(--line);border-radius:9px;overflow:hidden;}
+  .toggle button{font-family:var(--jp);font-size:12.5px;font-weight:700;color:var(--muted);background:#fff;border:none;
+    padding:7px 13px;cursor:pointer;transition:background .14s,color .14s;}
+  .toggle button+button{border-left:1.5px solid var(--line);}
+  .toggle button[aria-pressed="true"]{background:var(--indigo);color:#fff;}
+  .toggle button:focus-visible{outline:2px solid var(--indigo);outline-offset:-2px;}
+
+  .head-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+  .mini-btn{font-family:var(--jp);font-size:12px;font-weight:700;color:var(--indigo);background:#fff;
+    border:1.5px solid var(--indigo);border-radius:8px;padding:6px 11px;cursor:pointer;transition:background .14s,color .14s;}
+  .mini-btn:hover{background:var(--indigo);color:#fff;}
+  .mini-btn:focus-visible{outline:2px solid var(--indigo);outline-offset:2px;}
+
+  /* memo full-text search */
+  .note-search{margin-top:12px;}
+  #noteSearch{width:100%;}
+  .note-results{margin-top:8px;display:none;flex-direction:column;gap:6px;}
+  .note-results.show{display:flex;}
+  .note-hit{text-align:left;font-family:var(--jp);background:var(--panel);border:1.5px solid var(--line);border-radius:10px;
+    padding:9px 12px;cursor:pointer;transition:border-color .14s;}
+  .note-hit:hover{border-color:var(--indigo);}
+  .note-hit:focus-visible{outline:2px solid var(--indigo);outline-offset:2px;}
+  .note-hit .hit-area{font-size:13px;font-weight:700;color:var(--indigo);}
+  .note-hit .hit-line{font-size:12.5px;color:var(--muted);margin-top:2px;line-height:1.45;}
+  .note-hit mark{background:var(--gold-soft);color:var(--gold);border-radius:3px;padding:0 2px;}
+  .note-empty{font-size:12.5px;color:var(--muted);padding:4px 2px;}
+
+  /* disabled "開く" on other-services cards */
+  .card .open:disabled{border-color:var(--line-strong);color:var(--line-strong);cursor:not-allowed;background:#fff;}
+  .card .open:disabled:hover{background:#fff;color:var(--line-strong);}
+
+  .reminder{margin-top:34px;border-top:1px solid var(--line);padding-top:18px;font-size:13px;color:var(--muted);}
+  .reminder b{color:var(--ink);font-weight:700;}
+  .reminder .k{color:var(--persimmon-dk);font-weight:700;}
+  .reminder .store{display:block;margin-top:10px;font-size:12px;}
+
+  @media(max-width:520px){
+    .card{grid-template-columns:1fr;}
+    .card .open{grid-column:1;grid-row:auto;justify-self:start;margin-top:8px;}
+    .card .copy{grid-column:1;justify-self:start;}
+    .city-side{flex-direction:row;flex-wrap:wrap;}
+    .listbox-head{flex-direction:column;align-items:flex-start;gap:8px;}
+    .head-actions{width:100%;}
   }
-  .wrap { max-width: 760px; margin: 0 auto; padding: 0 14px; }
-  header { padding: 30px 0 14px; }
-  .eyebrow { font-size: 11px; letter-spacing: 0.16em; color: var(--accent); font-weight: 700; margin-bottom: 9px; }
-  h1 { font-size: 22px; font-weight: 800; line-height: 1.32; margin-bottom: 11px; letter-spacing: -0.01em; }
-  .lede { font-size: 13px; color: var(--sub); line-height: 1.75; }
-  .lede b { color: var(--ink); }
-  .backlink { display: inline-block; margin-top: 12px; font-size: 12px; font-weight: 700; color: var(--accent); text-decoration: none; }
-  .backlink::before { content: "← "; }
-
-  .controls { background: var(--paper); padding: 12px 0 10px; border-bottom: 1px solid var(--line); }
-  .filter-label { font-size: 10.5px; font-weight: 700; color: var(--sub); letter-spacing: 0.08em; margin-bottom: 6px; text-transform: uppercase; }
-  .region-block { margin-bottom: 9px; }
-  .region-name { font-size: 11px; font-weight: 700; color: var(--accent-ink); margin: 6px 0 4px; }
-  .chips { display: flex; flex-wrap: wrap; gap: 6px; }
-  .chip {
-    font-size: 12.5px; font-weight: 600; padding: 5px 11px; border-radius: 16px;
-    background: var(--chip); color: var(--sub); border: 1px solid transparent;
-    cursor: pointer; user-select: none; transition: all .12s;
-  }
-  .chip:active { transform: scale(0.96); }
-  .chip.on { background: var(--accent); color: #fff; }
-
-  .result { margin-top: 16px; }
-  .result.hidden { display: none; }
-  .picked { font-size: 15px; font-weight: 800; margin-bottom: 4px; }
-  .picked b { color: var(--accent); }
-  .hint { font-size: 11.5px; color: var(--sub); margin-bottom: 12px; line-height: 1.7; }
-
-  .openall { width: 100%; font-size: 14px; font-weight: 800; padding: 12px; border-radius: 11px; border: none; background: var(--accent); color: #fff; cursor: pointer; margin-bottom: 12px; -webkit-appearance: none; }
-  .openall:active { opacity: .85; }
-
-  .portal {
-    display: flex; align-items: center; justify-content: space-between; gap: 10px;
-    background: var(--card); border: 1px solid var(--line); border-radius: 12px;
-    padding: 13px 14px; margin-bottom: 9px; text-decoration: none; color: var(--ink);
-  }
-  .portal:active { background: var(--accent-soft); }
-  .p-main { min-width: 0; }
-  .p-name { font-size: 14.5px; font-weight: 800; }
-  .p-note { font-size: 11px; color: var(--sub); margin-top: 2px; }
-  .p-go { font-size: 12px; font-weight: 800; color: var(--accent); white-space: nowrap; }
-  .p-go::after { content: " ↗"; }
-
-  .empty { text-align: center; padding: 40px 20px; color: var(--sub); font-size: 13px; }
-  .note { margin-top: 24px; padding: 15px; background: #e4e7ea; border-radius: 12px; font-size: 11.5px; line-height: 1.85; color: #4a4e54; }
-  .note b { color: var(--ink); }
-  .note p { margin-bottom: 8px; } .note p:last-child { margin-bottom: 0; }
 </style>
 </head>
 <body>
 <div class="wrap">
 
   <header>
-    <div class="eyebrow">MONTHLY APARTMENT · SEARCH LAUNCHER</div>
-    <h1>マンスリー物件 検索ランチャー<br><span style="font-size:13.5px;font-weight:700;color:var(--accent)">レオパレス等のポータルを都道府県で横断検索</span></h1>
-    <p class="lede">マンスリー物件は件数が膨大で毎日変動するため、データは持たず<b>主要ポータルの検索結果を一発で開く</b>方式です。都道府県を選ぶと、各ポータルの最新の物件一覧へ飛べます。<b>予算・期間・間取りは各ポータル側で絞り込み</b>してください（常に最新）。</p>
-    <a class="backlink" href="/">ロングステイ宿データベース（独立系・直予約）へ戻る</a>
+    <p class="eyebrow">Monthly stay · 多拠点リサーチ</p>
+    <h1>マンスリー検索ランチャー</h1>
+    <p class="lede">エリアを選ぶと、料金コミコミでアプリ完結の「住む×泊まる」サービス（unito／Sumyca／goodroom／Airbnb）を同じエリアで開きます。お気に入り・全履歴・複数行メモはこの端末に記録されます。</p>
   </header>
 
-  <div class="controls">
-    <div class="filter-label">都道府県を選ぶ</div>
-    <div id="regions"></div>
+  <div class="step">
+    <span class="num">1</span>
+    <div><h2>エリアを選ぶ</h2><p class="hint">よく見る5エリア。他の県はプルダウンから。</p></div>
   </div>
 
-  <div class="result hidden" id="result">
-    <div class="picked" id="picked"></div>
-    <div class="hint">各ボタンで新しいタブにそのポータルの<b id="pref-label"></b>の物件一覧が開きます。市区町村・駅・予算・期間での絞り込みは開いた先で行えます。</div>
-    <button class="openall" id="openall">▶ 全ポータルをまとめて開く</button>
-    <div id="portals"></div>
+  <div class="tiles" id="tiles"></div>
+
+  <div class="all-pref">
+    <label for="prefSelect">その他の県：</label>
+    <select id="prefSelect"><option value="">— 選択 —</option></select>
   </div>
 
-  <div class="empty" id="empty">↑ 都道府県を選ぶと、各ポータルの検索結果リンクが出ます。</div>
+  <div class="listbox" id="favSection">
+    <div class="listbox-head">
+      <span class="label"><span class="star">★</span> お気に入り</span>
+      <button class="clear" id="clearFav" type="button">すべて外す</button>
+    </div>
+    <div class="chips" id="favChips"></div>
+  </div>
 
-  <div class="note">
-    <p>※ <b>このページは「ロングステイ宿データベース」とは別ツール</b>です。あちらは独立系・直予約のゲストハウス（手作業で厳選した37件）、こちらは<b>商用マンスリーマンション（レオパレス等）をポータル横断で探す</b>ためのランチャーです。</p>
-    <p>※ <b>掲載ポータル</b>：レオパレス21（自社物件）／LIFULL HOME'S マンスリー・マンスリーマンション.com・グッドマンスリー（各社物件を横断）／マンスリー48（首都圏＋愛知・福岡）。物件数・料金・空室は各ポータルの表示が最新です。</p>
-    <p>※ 「全ポータルをまとめて開く」はブラウザのポップアップブロックで一部開かないことがあります。その場合は各ボタンを個別にタップしてください。</p>
+  <div class="listbox" id="history">
+    <div class="listbox-head">
+      <span class="label">検索した全エリア</span>
+      <div class="head-actions">
+        <div class="toggle" id="histSort">
+          <button type="button" data-sort="recent">最近順</button>
+          <button type="button" data-sort="count">回数順</button>
+        </div>
+        <button class="mini-btn" id="exportCsv" type="button">CSVエクスポート</button>
+        <button class="clear" id="clearHistory" type="button">履歴をクリア</button>
+      </div>
+    </div>
+    <div class="chips" id="chips"></div>
+  </div>
+
+  <div class="step">
+    <span class="num">2</span>
+    <div><h2>市区町村・駅メモ（任意・複数行可）</h2><p class="hint">エリアごとに自動保存。候補を何件でも書けます。</p></div>
+  </div>
+  <div class="city-row">
+    <textarea id="cityNote" placeholder="例：&#10;札幌市中央区（コワーキング近く）&#10;円山公園エリア&#10;駅徒歩10分以内 / 5〜7万"></textarea>
+    <div class="city-side">
+      <button class="btn fav" id="favToggle" type="button" disabled>☆ お気に入り</button>
+      <button class="btn" id="copyCity" type="button">メモをコピー</button>
+      <span class="saved-flag" id="savedFlag">保存しました</span>
+    </div>
+  </div>
+  <div class="note-search">
+    <input type="text" id="noteSearch" placeholder="メモを全エリア横断で検索（市区町村名・キーワード）" autocomplete="off">
+    <div class="note-results" id="noteResults"></div>
+  </div>
+
+  <div class="step">
+    <span class="num">3</span>
+    <div><h2>住まいを探す（料金コミコミ・アプリ完結／エアビー型）</h2><p class="hint">敷礼・仲介・水光熱コミでアプリ/オンライン完結。不動産屋を挟まず即入居できる「住む×泊まる」型を、各サービス個別に開きます。</p></div>
+  </div>
+
+  <div class="deck-bar">
+    <p class="hint" id="deckHint">エリアを選ぶと、Airbnb は選択エリアで検索できます（他はアプリ内でエリア指定）。</p>
+  </div>
+
+  <div class="deck" id="stayDeck"></div>
+
+  <div class="step">
+    <span class="num">+</span>
+    <div><h2>他の住まいサービス（マンスリー以外）</h2><p class="hint">多拠点・移住系。個別に開きます。</p></div>
+  </div>
+  <div class="deck" id="otherDeck"></div>
+
+  <div class="reminder">
+    <b>契約のコツ：</b>最初から数か月で契約せず、<span class="k">まず1か月だけ契約 → 滞在中に延長申請</span>。延長は次の予約が入っていなければ通りやすく、合わなければそのまま終了でき、前払い分の取りこぼしも避けられます。
+    <span class="store" id="storeStatus"></span>
   </div>
 
 </div>
 
 <script>
-// 都道府県（slug は各ポータル共通の標準ヘボン式・小文字。実URLで検証済み）
-const PREFS = [
-  ["北海道・東北", [["北海道","hokkaido"],["青森","aomori"],["岩手","iwate"],["宮城","miyagi"],["秋田","akita"],["山形","yamagata"],["福島","fukushima"]]],
-  ["関東", [["茨城","ibaraki"],["栃木","tochigi"],["群馬","gunma"],["埼玉","saitama"],["千葉","chiba"],["東京","tokyo"],["神奈川","kanagawa"]]],
-  ["中部", [["新潟","niigata"],["富山","toyama"],["石川","ishikawa"],["福井","fukui"],["山梨","yamanashi"],["長野","nagano"],["岐阜","gifu"],["静岡","shizuoka"],["愛知","aichi"]]],
-  ["近畿", [["三重","mie"],["滋賀","shiga"],["京都","kyoto"],["大阪","osaka"],["兵庫","hyogo"],["奈良","nara"],["和歌山","wakayama"]]],
-  ["中国・四国", [["鳥取","tottori"],["島根","shimane"],["岡山","okayama"],["広島","hiroshima"],["山口","yamaguchi"],["徳島","tokushima"],["香川","kagawa"],["愛媛","ehime"],["高知","kochi"]]],
-  ["九州・沖縄", [["福岡","fukuoka"],["佐賀","saga"],["長崎","nagasaki"],["熊本","kumamoto"],["大分","oita"],["宮崎","miyazaki"],["鹿児島","kagoshima"],["沖縄","okinawa"]]],
-];
+  const PREFS=[["北海道","hokkaido"],["青森","aomori"],["岩手","iwate"],["宮城","miyagi"],["秋田","akita"],
+    ["山形","yamagata"],["福島","fukushima"],["茨城","ibaraki"],["栃木","tochigi"],["群馬","gunma"],
+    ["埼玉","saitama"],["千葉","chiba"],["東京","tokyo"],["神奈川","kanagawa"],["新潟","niigata"],
+    ["富山","toyama"],["石川","ishikawa"],["福井","fukui"],["山梨","yamanashi"],["長野","nagano"],
+    ["岐阜","gifu"],["静岡","shizuoka"],["愛知","aichi"],["三重","mie"],["滋賀","shiga"],
+    ["京都","kyoto"],["大阪","osaka"],["兵庫","hyogo"],["奈良","nara"],["和歌山","wakayama"],
+    ["鳥取","tottori"],["島根","shimane"],["岡山","okayama"],["広島","hiroshima"],["山口","yamaguchi"],
+    ["徳島","tokushima"],["香川","kagawa"],["愛媛","ehime"],["高知","kochi"],["福岡","fukuoka"],
+    ["佐賀","saga"],["長崎","nagasaki"],["熊本","kumamoto"],["大分","oita"],["宮崎","miyazaki"],
+    ["鹿児島","kagoshima"],["沖縄","okinawa"]];
+  const FEATURED=[
+    {jp:"札幌",slug:"hokkaido",tag:"北海道",note:"札幌市"},
+    {jp:"熊本",slug:"kumamoto",tag:"九州",note:""},
+    {jp:"和歌山",slug:"wakayama",tag:"近畿",note:""},
+    {jp:"山口",slug:"yamaguchi",tag:"中国",note:""},
+    {jp:"島根",slug:"shimane",tag:"中国",note:""}];
 
-// ポータル定義。url(slug)=検索結果URL。prefs を指定したものは対応県のみ表示。
-const PORTALS = [
-  { name:"レオパレス21", note:"自社物件・全国（短期/マンスリープランあり）",
-    url: s => `https://www.leopalace21.com/properties/monthly/area/${s}` },
-  { name:"LIFULL HOME'S マンスリー", note:"大手ポータル・各社物件を横断",
-    url: s => `https://monthly.homes.jp/${s}/list` },
-  { name:"マンスリーマンション.com", note:"市区町村から絞り込み・全国",
-    url: s => `https://www.monthly-mansion.com/${s}/` },
-  { name:"グッドマンスリー", note:"市区町村から絞り込み・全国",
-    url: s => `https://www.good-monthly.com/${s}/search/` },
-  { name:"マンスリー48", note:"対応: 東京/神奈川/千葉/埼玉/愛知/福岡",
-    prefs:["tokyo","kanagawa","chiba","saitama","aichi","fukuoka"],
-    url: s => `https://monthly48.com/${s}/top` },
-];
+  // ---- 料金コミコミ・アプリ/オンラインで予約完結（エアビー型の「住む×泊まる」）。URL変更はここだけ直す ----
+  // unito/Sumyca/goodroom は都道府県ディープリンクが未確認/非対応(実機で /osaka・/shimane が404 など)のため、
+  // 原則トップ/入口だけ開く（推測でURLを作らない）。Airbnb だけ標準の検索パスで選択エリアに連動させる
+  // （月単位の絞り込みはアプリ内で「月」を選ぶ。エリア未選択時は全国マンスリーの入口へ）。
+  const STAY_APPS=[
+    {key:"unito",name:"unito（ユニット）",use:"「泊まるように住む」。敷礼・仲介・水光熱なし、外泊した日は家賃が下がるリレント制。契約〜退去までアプリ完結。",
+      scope:"エリア・期間はアプリ内で",needArea:false,url:()=>"https://unito.life/"},
+    {key:"sumyca",name:"Sumyca",use:"マンスリー/ホテル/民泊を横断。初期費用0・保証人不要・カード払い、最短翌日入居でオンライン完結。",
+      scope:"エリアはサイト内で",needArea:false,url:()=>"https://www.sumyca.com/"},
+    {key:"goodroom",name:"goodroom サブスくらし（旧ホテルパス）",use:"ホテル・マンスリーに住み放題。初期費用0・家具家電付き・Web完結。対応は主要都市圏中心。",
+      scope:"対応は主要都市圏。エリアはサイト内で",needArea:false,url:()=>"https://www.goodrooms.jp/"},
+    {key:"airbnb",name:"Airbnb マンスリー（28泊〜）",use:"28泊以上で月割引。清掃料コミの総額表示でアプリ完結。選択エリアで検索します。",
+      scope:"選択エリアで検索（アプリ内で「月」を選択）",needArea:false,
+      url:()=>current?`https://www.airbnb.jp/s/${encodeURIComponent(current.jp)}/homes`:"https://www.airbnb.com/japan/stays/monthly"}];
 
-const regionsEl = document.getElementById('regions');
-const resultEl = document.getElementById('result');
-const emptyEl = document.getElementById('empty');
-const pickedEl = document.getElementById('picked');
-const prefLabelEl = document.getElementById('pref-label');
-const portalsEl = document.getElementById('portals');
-const openallBtn = document.getElementById('openall');
+  // ---- 他の住まいサービス（マンスリー以外）。URLが変わったらここだけ直す ----
+  // ADDress は都道府県のディープリンクが未確認なのでトップ/入口だけ開く（推測しない）。
+  // お試し移住住宅だけ選択エリア名でGoogle検索する（エリア連動・current.jp が必要）。
+  const OTHER_SERVICES=[
+    {key:"address",name:"ADDress",use:"全国の拠点に定額で住み放題の多拠点サービス。",
+      scope:"エリア絞りはサイト内の地図／一覧で",needArea:false,url:()=>"https://address.love/"},
+    {key:"trial",name:"自治体お試し移住住宅",use:"選択エリア名でお試し移住・移住体験住宅をGoogle検索。",
+      scope:"選択エリアでGoogle検索",needArea:true,
+      url:()=>`https://www.google.com/search?q=${encodeURIComponent(`${current.jp} お試し移住 住宅`)}`}];
 
-let current = null; // {name, slug}
+  // ---- storage (safe, backward-compatible) ----
+  const KEY="monthly-launcher-v1";
+  let storeOK=true;
+  function loadStore(){try{const r=localStorage.getItem(KEY);return r?JSON.parse(r):{};}catch(e){storeOK=false;return {};}}
+  function saveStore(){try{localStorage.setItem(KEY,JSON.stringify(store));}catch(e){storeOK=false;updateStoreStatus();}}
+  let store=loadStore();
+  store.notes=store.notes||{};
+  store.history=store.history||[];     // [{slug,jp,ts,count}]  全件（最大47, slug重複なし）
+  store.favorites=store.favorites||[]; // [{slug,jp}]
+  store.lastSlug=store.lastSlug||null;
+  store.historySort=store.historySort||'recent'; // 'recent' | 'count'
 
-PREFS.forEach(([region, prefs]) => {
-  const block = document.createElement('div');
-  block.className = 'region-block';
-  const rn = document.createElement('div');
-  rn.className = 'region-name'; rn.textContent = region;
-  const chips = document.createElement('div');
-  chips.className = 'chips';
-  prefs.forEach(([name, slug]) => {
-    const c = document.createElement('span');
-    c.className = 'chip'; c.textContent = name; c.dataset.slug = slug;
-    c.onclick = () => select(name, slug);
-    chips.appendChild(c);
+  function updateStoreStatus(){
+    document.getElementById('storeStatus').textContent=storeOK
+      ? "記録：この端末のブラウザに保存中（お気に入り・全履歴・メモ）。"
+      : "記録：このプレビューでは保存が無効です。ファイルを自前のブラウザ／サーバーで開くと有効になります。";
+  }
+
+  let current=null;
+  const cityNote=document.getElementById('cityNote');
+  const favToggle=document.getElementById('favToggle');
+
+  // ---- tiles ----
+  const tilesEl=document.getElementById('tiles');
+  FEATURED.forEach(r=>{
+    const b=document.createElement('button');
+    b.className='tile';b.type='button';b.setAttribute('aria-pressed','false');b.dataset.slug=r.slug;
+    b.innerHTML=`<span class="region-tag">${r.tag}</span><div class="region-jp">${r.jp}</div><div class="region-ro">${r.slug}</div>`;
+    b.addEventListener('click',()=>select({jp:r.jp,slug:r.slug,defaultNote:r.note}));
+    tilesEl.appendChild(b);
   });
-  block.appendChild(rn); block.appendChild(chips);
-  regionsEl.appendChild(block);
-});
 
-function applicablePortals(slug){
-  return PORTALS.filter(p => !p.prefs || p.prefs.includes(slug));
-}
+  // ---- dropdown ----
+  const sel=document.getElementById('prefSelect');
+  PREFS.forEach(([jp,slug])=>{const o=document.createElement('option');o.value=slug;o.textContent=jp;sel.appendChild(o);});
+  sel.addEventListener('change',()=>{if(!sel.value)return;const jp=PREFS.find(p=>p[1]===sel.value)[0];select({jp,slug:sel.value,defaultNote:""});});
 
-function select(name, slug){
-  current = { name, slug };
-  document.querySelectorAll('.chip').forEach(c => c.classList.toggle('on', c.dataset.slug === slug));
-  pickedEl.innerHTML = `<b>${name}</b> のマンスリー物件`;
-  prefLabelEl.textContent = name;
-  portalsEl.innerHTML = '';
-  applicablePortals(slug).forEach(p => {
-    const a = document.createElement('a');
-    a.className = 'portal'; a.href = p.url(slug); a.target = '_blank'; a.rel = 'noopener';
-    a.innerHTML = `<span class="p-main"><span class="p-name">${p.name}</span>`
-      + `<span class="p-note">${p.note}</span></span><span class="p-go">開く</span>`;
-    portalsEl.appendChild(a);
+  // ---- select ----
+  function select(region){
+    current={jp:region.jp,slug:region.slug};
+    document.querySelectorAll('.tile').forEach(t=>t.setAttribute('aria-pressed',t.dataset.slug===region.slug?'true':'false'));
+    sel.value=FEATURED.some(f=>f.slug===region.slug)?'':region.slug;
+    const saved=store.notes[region.slug];
+    cityNote.value=(saved!==undefined?saved:(region.defaultNote||""));
+    store.lastSlug=region.slug;saveStore();
+    updateFavToggle();
+    updateDeckHint();
+    renderStayApps();
+    renderOther();
+  }
+
+  // ---- deck hint（選択エリアの案内文） ----
+  const deckHint=document.getElementById('deckHint');
+  function noteHint(){const n=cityNote.value.trim().replace(/\s*\n\s*/g,' / ');return n?`（メモ「${n}」を参考に絞り込み）`:'';}
+  function updateDeckHint(){
+    deckHint.textContent=current
+      ? `${current.jp} で探す`+noteHint()+'：Airbnb は選択エリアで検索、他はアプリ内でエリア指定。'
+      : 'エリアを選ぶと、Airbnb は選択エリアで検索できます（他はアプリ内でエリア指定）。';
+  }
+
+  // ---- memo autosave (textarea) ----
+  const savedFlag=document.getElementById('savedFlag');let flagTimer=null;
+  cityNote.addEventListener('input',()=>{
+    if(!current)return;
+    store.notes[current.slug]=cityNote.value;saveStore();
+    updateDeckHint();
+    savedFlag.classList.add('show');clearTimeout(flagTimer);flagTimer=setTimeout(()=>savedFlag.classList.remove('show'),900);
   });
-  resultEl.classList.remove('hidden');
-  emptyEl.style.display = 'none';
-  resultEl.scrollIntoView({ behavior:'smooth', block:'start' });
-}
+  document.getElementById('copyCity').addEventListener('click',()=>{const v=cityNote.value.trim();if(v)copy(v,document.getElementById('copyCity'));});
 
-openallBtn.onclick = () => {
-  if (!current) return;
-  applicablePortals(current.slug).forEach(p => window.open(p.url(current.slug), '_blank', 'noopener'));
-};
+  // ---- favorites ----
+  const favSection=document.getElementById('favSection'),favChips=document.getElementById('favChips');
+  function isFav(slug){return store.favorites.some(f=>f.slug===slug);}
+  function updateFavToggle(){
+    if(!current){favToggle.disabled=true;favToggle.textContent='☆ お気に入り';favToggle.classList.remove('on');return;}
+    favToggle.disabled=false;const on=isFav(current.slug);
+    favToggle.textContent=on?'★ お気に入り済み':'☆ お気に入りに追加';favToggle.classList.toggle('on',on);
+  }
+  favToggle.addEventListener('click',()=>{
+    if(!current)return;
+    if(isFav(current.slug))store.favorites=store.favorites.filter(f=>f.slug!==current.slug);
+    else store.favorites.unshift({slug:current.slug,jp:current.jp});
+    saveStore();renderFav();updateFavToggle();
+  });
+  function renderFav(){
+    favChips.innerHTML='';
+    if(!store.favorites.length){favSection.classList.remove('show');return;}
+    favSection.classList.add('show');
+    store.favorites.forEach(f=>{
+      const chip=document.createElement('button');chip.className='chip fav';chip.type='button';
+      chip.innerHTML=`★ ${f.jp}<span class="x" title="外す">✕</span>`;
+      chip.addEventListener('click',e=>{
+        if(e.target.classList.contains('x')){
+          store.favorites=store.favorites.filter(x=>x.slug!==f.slug);saveStore();renderFav();updateFavToggle();return;
+        }
+        const ft=FEATURED.find(x=>x.slug===f.slug);select({jp:f.jp,slug:f.slug,defaultNote:ft?ft.note:""});
+        window.scrollTo({top:0,behavior:'smooth'});
+      });
+      favChips.appendChild(chip);
+    });
+  }
+  document.getElementById('clearFav').addEventListener('click',()=>{store.favorites=[];saveStore();renderFav();updateFavToggle();});
+
+  // ---- history (full, deduped by slug, with count) ----
+  const historyEl=document.getElementById('history'),chipsEl=document.getElementById('chips');
+  function pushHistory(){
+    if(!current)return;
+    const ex=store.history.find(h=>h.slug===current.slug);
+    store.history=store.history.filter(h=>h.slug!==current.slug);
+    store.history.unshift({slug:current.slug,jp:current.jp,ts:Date.now(),count:(ex?ex.count||1:0)+1});
+    saveStore();renderHistory();
+  }
+  function sortedHistory(){
+    const arr=store.history.slice();
+    if(store.historySort==='count'){arr.sort((a,b)=>((b.count||1)-(a.count||1))||((b.ts||0)-(a.ts||0)));}
+    return arr; // 'recent' は unshift 済みで既に新しい順
+  }
+  function renderHistory(){
+    chipsEl.innerHTML='';
+    if(!store.history.length){historyEl.classList.remove('show');return;}
+    historyEl.classList.add('show');
+    sortedHistory().forEach(h=>{
+      const chip=document.createElement('button');chip.className='chip';chip.type='button';
+      const cnt=(h.count&&h.count>1)?`×${h.count} `:'';
+      chip.innerHTML=`${h.jp}<span class="ts">${cnt}${fmt(h.ts)}</span>`;
+      chip.addEventListener('click',()=>{const f=FEATURED.find(x=>x.slug===h.slug);select({jp:h.jp,slug:h.slug,defaultNote:f?f.note:""});window.scrollTo({top:0,behavior:'smooth'});});
+      chipsEl.appendChild(chip);
+    });
+  }
+  document.getElementById('clearHistory').addEventListener('click',()=>{store.history=[];saveStore();renderHistory();});
+  function fmt(ts){const d=new Date(ts),n=new Date();const same=d.toDateString()===n.toDateString();
+    return same?`${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`:`${d.getMonth()+1}/${d.getDate()}`;}
+
+  // ---- helpers: slug→日本語名 / HTMLエスケープ / 強調 ----
+  function slugToJp(slug){
+    const f=FEATURED.find(x=>x.slug===slug);if(f)return f.jp;
+    const p=PREFS.find(x=>x[1]===slug);if(p)return p[0];
+    return slug;
+  }
+  function escHtml(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
+  function highlight(line,q){
+    const escLine=escHtml(line),escQ=escHtml(q);
+    if(!escQ)return escLine;
+    const re=new RegExp(escQ.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'),'ig');
+    return escLine.replace(re,m=>`<mark>${m}</mark>`);
+  }
+
+  // ---- 1. メモの全文横断検索 ----
+  const noteSearch=document.getElementById('noteSearch'),noteResults=document.getElementById('noteResults');
+  function runNoteSearch(){
+    const q=noteSearch.value.trim();
+    noteResults.innerHTML='';
+    if(!q){noteResults.classList.remove('show');return;}
+    const ql=q.toLowerCase();
+    const hits=[];
+    Object.keys(store.notes).forEach(slug=>{
+      const text=store.notes[slug]||'';
+      if(!text||!text.toLowerCase().includes(ql))return;
+      const lines=text.split('\n');
+      const matched=lines.filter(ln=>ln.toLowerCase().includes(ql));
+      hits.push({slug,jp:slugToJp(slug),lines:matched.length?matched:[lines[0]]});
+    });
+    noteResults.classList.add('show');
+    if(!hits.length){noteResults.innerHTML='<div class="note-empty">一致するメモはありません。</div>';return;}
+    hits.forEach(h=>{
+      const btn=document.createElement('button');btn.className='note-hit';btn.type='button';
+      const lineHtml=h.lines.map(ln=>highlight(ln,q)).join('<br>');
+      btn.innerHTML=`<div class="hit-area">${escHtml(h.jp)}</div><div class="hit-line">${lineHtml}</div>`;
+      btn.addEventListener('click',()=>{
+        const f=FEATURED.find(x=>x.slug===h.slug);
+        select({jp:h.jp,slug:h.slug,defaultNote:f?f.note:""});
+        window.scrollTo({top:0,behavior:'smooth'});
+      });
+      noteResults.appendChild(btn);
+    });
+  }
+  noteSearch.addEventListener('input',runNoteSearch);
+
+  // ---- 2. 履歴の並べ替え + CSVエクスポート ----
+  const histSort=document.getElementById('histSort');
+  function updateHistSortUI(){histSort.querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.sort===store.historySort?'true':'false'));}
+  histSort.querySelectorAll('button').forEach(b=>b.addEventListener('click',()=>{
+    store.historySort=b.dataset.sort;saveStore();updateHistSortUI();renderHistory();
+  }));
+  function fmtFull(ts){const d=new Date(ts),p=n=>String(n).padStart(2,'0');
+    return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}`;}
+  function csvCell(v){const s=String(v);return /[",\r\n]/.test(s)?`"${s.replace(/"/g,'""')}"`:s;}
+  document.getElementById('exportCsv').addEventListener('click',()=>{
+    const rows=[['エリア','slug','検索回数','最終検索日時']];
+    sortedHistory().forEach(h=>rows.push([h.jp,h.slug,String(h.count||1),fmtFull(h.ts)]));
+    const csv=rows.map(r=>r.map(csvCell).join(',')).join('\r\n');
+    const blob=new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8'});
+    const url=URL.createObjectURL(blob);
+    const d=new Date(),p=n=>String(n).padStart(2,'0');
+    const a=document.createElement('a');a.href=url;
+    a.download=`longstay-history-${d.getFullYear()}${p(d.getMonth()+1)}${p(d.getDate())}.csv`;
+    document.body.appendChild(a);a.click();a.remove();
+    setTimeout(()=>URL.revokeObjectURL(url),1000);
+  });
+
+  // ---- 3. サービスカード描画（エアビー型 / 他の住まいサービス 共通） ----
+  // url() がクリック時に最新の current で再評価されるので、Airbnb/お試し住宅などエリア連動も常に正しいリンクになる
+  function renderServiceCards(list,el,recordHistory){
+    el.innerHTML='';
+    list.forEach(svc=>{
+      const need=svc.needArea&&!current;
+      const u=need?'':svc.url();
+      const c=document.createElement('div');c.className='card extra';
+      const openEl=need
+        ? '<button class="open" type="button" disabled>開く ↗</button>'
+        : `<a class="open" href="${u}" target="_blank" rel="noopener">開く ↗</a>`;
+      c.innerHTML=`<div class="name">${svc.name}</div><div class="use">${svc.use}</div>
+        <div class="url">${svc.scope}${need?'（エリアを選ぶと有効）':''}</div>
+        ${openEl}`;
+      const a=c.querySelector('a.open');
+      if(a)a.addEventListener('click',()=>{
+        a.href=svc.url();                         // エリア連動カードはクリック時に最新 current で再生成
+        if(recordHistory&&current)pushHistory();  // エアビー型を開いた＝そのエリアを検索した、として履歴に記録
+      });
+      el.appendChild(c);
+    });
+  }
+  const stayDeck=document.getElementById('stayDeck'),otherDeck=document.getElementById('otherDeck');
+  function renderStayApps(){renderServiceCards(STAY_APPS,stayDeck,true);}
+  function renderOther(){renderServiceCards(OTHER_SERVICES,otherDeck,false);}
+
+  // ---- copy ----
+  function copy(text,btn){navigator.clipboard.writeText(text).then(()=>{const o=btn.textContent;btn.textContent='コピーしました';setTimeout(()=>btn.textContent=o,1300);}).catch(()=>{});}
+
+  // ---- init ----
+  updateStoreStatus();updateHistSortUI();renderFav();renderHistory();updateFavToggle();updateDeckHint();renderStayApps();renderOther();
+  if(store.lastSlug){
+    const f=FEATURED.find(x=>x.slug===store.lastSlug),pref=PREFS.find(p=>p[1]===store.lastSlug);
+    if(f||pref){select({jp:f?f.jp:pref[0],slug:store.lastSlug,defaultNote:f?f.note:""});}
+  }
 </script>
 </body>
 </html>
