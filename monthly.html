@@ -229,6 +229,13 @@
   <div class="deck" id="stayDeck"></div>
 
   <div class="step">
+    <span class="num">宿</span>
+    <div><h2>この地域の独立系の宿（本体DB）</h2><p class="hint">選択エリアに登録のある直予約ゲストハウス等。本体「ロングステイ宿DB」のデータを同じエリアで表示します。</p></div>
+  </div>
+  <div class="deck-bar"><p class="hint" id="hostelHint">エリアを選ぶと表示します。</p></div>
+  <div class="deck" id="hostelDeck"></div>
+
+  <div class="step">
     <span class="num">+</span>
     <div><h2>他の住まいサービス（マンスリー以外）</h2><p class="hint">多拠点・移住系。個別に開きます。</p></div>
   </div>
@@ -332,6 +339,7 @@
     updateFavToggle();
     updateDeckHint();
     renderStayApps();
+    renderHostels();
     renderOther();
   }
 
@@ -510,11 +518,52 @@
   function renderStayApps(){renderServiceCards(STAY_APPS,stayDeck,true);}
   function renderOther(){renderServiceCards(OTHER_SERVICES,otherDeck,false);}
 
+  // ---- 4. この地域の独立系の宿（本体 data.json を同一オリジンで読み、選択エリアの pref で絞る） ----
+  // mapsUrl は index.html と同じロジック（name＋loc先頭の市区町村でGoogleマップ検索）。
+  function mapsUrl(item){
+    const locHead=(item.loc||'').split(/[・（(\/]/)[0].trim();
+    const q=(item.name+' '+(locHead||item.pref||'')).trim();
+    return 'https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(q);
+  }
+  function currentPrefName(){return current?((PREFS.find(p=>p[1]===current.slug)||[])[0]||current.jp):null;}
+  let HOSTELS=null; // null=未取得 / []=取得失敗 or 取得済みで該当0
+  const hostelDeck=document.getElementById('hostelDeck'),hostelHint=document.getElementById('hostelHint');
+  function renderHostels(){
+    hostelDeck.innerHTML='';
+    if(!current){hostelHint.textContent='エリアを選ぶと、その地域の独立系の宿（本体DB）を表示します。';return;}
+    if(HOSTELS===null){hostelHint.textContent='宿データ（data.json）を読み込み中…';return;}
+    const pref=currentPrefName();
+    const items=HOSTELS.filter(x=>x.pref===pref);
+    hostelHint.textContent=`${current.jp} の独立系の宿：${items.length}件`
+      +(items.length?'（直予約・独立系ゲストハウス中心）':' — 本体DBはゲストハウス中心で、未登録の地域もあります。');
+    items.forEach(item=>{
+      const official=(item.links||[]).find(l=>l[1]&&l[1]!=='#');
+      const map=mapsUrl(item);
+      const tagline=[item.pref,item.loc].filter(Boolean).join('・')+(item.tags&&item.tags.length?` / ${item.tags.join('・')}`:'');
+      const openEl=official
+        ? `<a class="open" href="${official[1]}" target="_blank" rel="noopener">${escHtml(official[0])} ↗</a>`
+        : `<a class="open" href="${map}" target="_blank" rel="noopener">📍 マップ ↗</a>`;
+      const mapEl=official?`<a class="copy" href="${map}" target="_blank" rel="noopener">📍 Googleマップ</a>`:'';
+      const c=document.createElement('div');c.className='card';
+      c.innerHTML=`<div class="name">${escHtml(item.name)}</div>
+        <div class="use">${escHtml(tagline)}</div>
+        ${openEl}${mapEl}`;
+      hostelDeck.appendChild(c);
+    });
+  }
+  async function loadHostels(){
+    try{const r=await fetch('data.json',{cache:'no-store'});const d=await r.json();
+      HOSTELS=Array.isArray(d)?d:(d&&Array.isArray(d.items)?d.items:[]);}
+    catch(e){HOSTELS=[];} // file:// 直開きやサーバ無しなど。セクションは空のまま静かに無効化
+    renderHostels();
+  }
+
   // ---- copy ----
   function copy(text,btn){navigator.clipboard.writeText(text).then(()=>{const o=btn.textContent;btn.textContent='コピーしました';setTimeout(()=>btn.textContent=o,1300);}).catch(()=>{});}
 
   // ---- init ----
-  updateStoreStatus();updateHistSortUI();renderFav();renderHistory();updateFavToggle();updateDeckHint();renderStayApps();renderOther();
+  updateStoreStatus();updateHistSortUI();renderFav();renderHistory();updateFavToggle();updateDeckHint();renderStayApps();renderHostels();renderOther();
+  loadHostels(); // 本体 data.json を非同期で読み込み、完了後に該当エリアの宿を描画
   if(store.lastSlug){
     const f=FEATURED.find(x=>x.slug===store.lastSlug),pref=PREFS.find(p=>p[1]===store.lastSlug);
     if(f||pref){select({jp:f?f.jp:pref[0],slug:store.lastSlug,defaultNote:f?f.note:""});}
